@@ -1,6 +1,6 @@
 "use client";
 
-import { Github, Linkedin, Mail, ExternalLink, Award, Server } from "lucide-react";
+import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -128,7 +128,38 @@ const techStack = [
   "CSS3",
 ];
 
+const services = [
+  {
+    title: "Greenfield Web Applications",
+    description: "Full-stack web apps from scratch using Next.js, React, and modern tooling",
+  },
+  {
+    title: "Mobile Development",
+    description: "Cross-platform apps with React Native and Expo",
+  },
+  {
+    title: "Infrastructure & DevOps",
+    description: "Server setup, Kubernetes, CI/CD pipelines, and cloud architecture",
+  },
+  {
+    title: "Team Leadership",
+    description: "Development process setup, code reviews, and mentoring",
+  },
+  {
+    title: "AI Integration",
+    description: "Modern AI tooling and workflows to supercharge your team",
+  },
+  {
+    title: "Startup CTO-as-a-Service",
+    description: "Technical strategy and execution for early-stage startups",
+  },
+];
+
 export default function Page() {
+  const scrollToContact = () => {
+    document.getElementById("work-together")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <main className="min-h-screen bg-background">
       <div className="mx-auto max-w-4xl px-6 py-16">
@@ -147,10 +178,17 @@ export default function Page() {
               </p>
             </div>
             <p className="max-w-lg text-muted-foreground">
-              Full stack developer from the United Kingdom with a passion for infrastructure and DevOps.
-              Building modern web applications while running a homelab with Kubernetes, hypervisors, and self-hosted services.
+              Full stack developer from the UK with 8 years of experience. Currently digital nomading through South America.
+              This isn&apos;t just my job—it&apos;s my passion. I run a homelab that my family depends on daily.
             </p>
             <div className="flex items-center justify-center gap-2 md:justify-start">
+              <button
+                onClick={scrollToContact}
+                className={cn(buttonVariants({ variant: "default", size: "sm" }))}
+              >
+                <Sparkles className="size-4" />
+                Available for Hire
+              </button>
               <a
                 href="https://github.com/jamesdimonaco"
                 target="_blank"
@@ -228,7 +266,7 @@ export default function Page() {
               Homelab
             </h2>
             <p className="text-muted-foreground">
-              Self-hosted infrastructure for learning and experimentation
+              My mini-datacenter running production services for family—Nextcloud, Jellyfin, and more
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -247,7 +285,7 @@ export default function Page() {
           <div>
             <h2 className="text-2xl font-semibold tracking-tight">Tech Stack</h2>
             <p className="text-muted-foreground">
-              Technologies I work with
+              Tech-agnostic and always learning—these are my current tools
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -365,6 +403,119 @@ export default function Page() {
               </Card>
             ))}
           </div>
+        </section>
+
+        <Separator className="my-12" />
+
+        {/* Work Together Section */}
+        <section id="work-together" className="space-y-8 scroll-mt-8">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Let&apos;s Work Together
+            </h2>
+            <p className="text-muted-foreground">
+              Available for part-time contract work
+            </p>
+          </div>
+
+          {/* Status Cards */}
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Card size="sm">
+              <CardContent >
+                <div className="flex items-center gap-3">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-primary/10">
+                    <MapPin className="size-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Location</p>
+                    <p className="text-sm text-muted-foreground">South America</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card size="sm">
+              <CardContent>
+                <div className="flex items-center gap-3">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-primary/10">
+                    <Calendar className="size-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Experience</p>
+                    <p className="text-sm text-muted-foreground">8 years</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card size="sm">
+              <CardContent>
+                <div className="flex items-center gap-3">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-primary/10">
+                    <Users className="size-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">Team Lead</p>
+                    <p className="text-sm text-muted-foreground">Up to 8 people</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* About */}
+          <Card>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                I started coding young and never stopped. With 8 years of hands-on experience,
+                I&apos;ve led teams of up to 8 people (6 devs, QA, and designer) and shipped products
+                from zero to production.
+              </p>
+              <p className="text-muted-foreground">
+                Currently travelling through South America as a digital nomad, which means I&apos;m
+                available for <span className="text-foreground font-medium">part-time work at a reduced rate</span>.
+                Perfect for startups who need senior experience without the full-time commitment.
+              </p>
+              <p className="text-muted-foreground">
+                I&apos;m tech-agnostic and adapt to whatever your stack needs. Need a full team?
+                With modern AI tooling and my broad experience, I can often do the work of
+                multiple specialists for early-stage startups.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Services */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">What I Can Help With</h3>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {services.map((service) => (
+                <div key={service.title} className="flex gap-3">
+                  <div className="mt-1 size-2 shrink-0 rounded-full bg-primary" />
+                  <div>
+                    <p className="text-sm font-medium">{service.title}</p>
+                    <p className="text-sm text-muted-foreground">{service.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Rate & CTA */}
+          <Card className="border-primary/50 bg-primary/5">
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
+                <div>
+                  <p className="text-2xl font-bold">$400<span className="text-lg font-normal text-muted-foreground">/day</span></p>
+                  <p className="text-sm text-muted-foreground">Reduced rate while travelling • Part-time available</p>
+                </div>
+                <a
+                  href="mailto:James@dimonaco.co.uk?subject=Project Inquiry"
+                  className={cn(buttonVariants({ variant: "default", size: "lg" }))}
+                >
+                  <Mail className="size-4" />
+                  Get in Touch
+                </a>
+              </div>
+            </CardContent>
+          </Card>
         </section>
       </div>
     </main>

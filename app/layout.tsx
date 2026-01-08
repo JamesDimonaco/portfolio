@@ -15,8 +15,40 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "James Dimonaco | Frontend Developer",
-  description: "A passionate frontend developer from the United Kingdom",
+  title: "James Dimonaco | Full Stack Developer",
+  description: "Full stack developer from the UK with 8 years of experience. Specializing in TypeScript, React, Next.js, React Native, and infrastructure. Available for contract work.",
+  keywords: [
+    "James Dimonaco",
+    "Full Stack Developer",
+    "React Developer",
+    "Next.js Developer",
+    "TypeScript Developer",
+    "React Native Developer",
+    "DevOps",
+    "Kubernetes",
+    "Freelance Developer",
+    "Contract Developer",
+    "UK Developer",
+  ],
+  authors: [{ name: "James Dimonaco" }],
+  creator: "James Dimonaco",
+  openGraph: {
+    type: "website",
+    locale: "en_GB",
+    title: "James Dimonaco | Full Stack Developer",
+    description: "Full stack developer with 8 years of experience. Available for contract work. Specializing in TypeScript, React, Next.js, and infrastructure.",
+    siteName: "James Dimonaco",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "James Dimonaco | Full Stack Developer",
+    description: "Full stack developer with 8 years of experience. Available for contract work.",
+    creator: "@jamesdimonaco",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
