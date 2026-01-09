@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { GitHubStats } from "@/components/github-stats";
 
 // Animation variants
 const fadeInUp = {
@@ -542,6 +543,13 @@ export default function Page() {
               </motion.div>
             ))}
           </div>
+        </AnimatedSection>
+
+        <Separator className="my-12" />
+
+        {/* GitHub Stats Section */}
+        <AnimatedSection className="space-y-6">
+          <GitHubStats />
         </AnimatedSection>
 
         <Separator className="my-12" />
