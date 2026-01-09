@@ -6,7 +6,7 @@ import { useRef } from "react";
 import { Github, Star, GitFork, Users, Code, Flame } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
-interface GitHubStats {
+interface GitHubStatsData {
   publicRepos: number;
   totalStars: number;
   followers: number;
@@ -91,8 +91,8 @@ const statCards = [
   { key: "followers", label: "Followers", icon: Users, color: "#60a5fa" },
 ] as const;
 
-export function GitHubStats() {
-  const [stats, setStats] = useState<GitHubStats | null>(null);
+export function GitHubStats({ compact = false }: { compact?: boolean }) {
+  const [stats, setStats] = useState<GitHubStatsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const ref = useRef(null);
@@ -125,16 +125,18 @@ export function GitHubStats() {
       variants={staggerContainer}
       className="space-y-6"
     >
-      {/* Header */}
-      <div>
-        <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-          <Github className="size-5" />
-          GitHub Activity
-        </h2>
-        <p className="text-muted-foreground">
-          Live stats from my GitHub profile
-        </p>
-      </div>
+      {/* Header - hidden in compact mode */}
+      {!compact && (
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+            <Github className="size-5" />
+            GitHub Activity
+          </h2>
+          <p className="text-muted-foreground">
+            Live stats from my GitHub profile
+          </p>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -167,7 +169,7 @@ export function GitHubStats() {
       {/* Top Languages */}
       {stats?.topLanguages && stats.topLanguages.length > 0 && (
         <motion.div variants={staggerItem}>
-          <Card size="sm">
+          <Card size="sm" className="hover:scale-100 hover:shadow-none hover:ring-foreground/10">
             <CardContent>
               <div className="flex items-center gap-2 mb-3">
                 <Code className="size-4 text-primary" />

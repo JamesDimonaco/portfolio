@@ -15,6 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // UPDATE THIS to your actual domain when deployed
+  metadataBase: new URL("https://james.dimonaco.co.uk"),
   title: "James Dimonaco | Full Stack Developer",
   description: "Full stack developer from the UK with 8 years of experience. Specializing in TypeScript, React, Next.js, React Native, and infrastructure. Available for contract work.",
   keywords: [

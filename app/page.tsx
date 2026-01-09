@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase } from "lucide-react";
+import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -17,6 +17,11 @@ import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { GitHubStats } from "@/components/github-stats";
+
+// ============================================
+// UPDATE THIS WHEN YOU MOVE TO A NEW LOCATION
+// ============================================
+const CURRENT_LOCATION = "Colombia";
 
 // Animation variants
 const fadeInUp = {
@@ -279,6 +284,115 @@ const services = [
   },
 ];
 
+function SkillsAccordion() {
+  const [expanded, setExpanded] = useState<string | null>(null);
+
+  const toggle = (section: string) => {
+    setExpanded(expanded === section ? null : section);
+  };
+
+  const sections = [
+    {
+      id: "github",
+      title: "GitHub Activity",
+      icon: Github,
+      description: "Live stats from my profile",
+      content: <GitHubStats compact />,
+    },
+    {
+      id: "techstack",
+      title: "Full Tech Stack",
+      icon: Code,
+      description: `${techStack.length} technologies`,
+      content: (
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className="flex flex-wrap gap-2"
+        >
+          {techStack.map((tech) => (
+            <motion.div key={tech} variants={staggerItem}>
+              <Badge variant="outline">{tech}</Badge>
+            </motion.div>
+          ))}
+        </motion.div>
+      ),
+    },
+    {
+      id: "homelab",
+      title: "Homelab",
+      icon: Server,
+      description: "Self-hosted infrastructure",
+      content: (
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            My mini-datacenter running production services for family—Nextcloud, Jellyfin, and more
+          </p>
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="flex flex-wrap gap-2"
+          >
+            {homelab.map((item) => (
+              <motion.div key={item} variants={staggerItem}>
+                <Badge variant="outline">{item}</Badge>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div className="space-y-3">
+      {sections.map(({ id, title, icon: Icon, description, content }) => (
+        <Card
+          key={id}
+          size="sm"
+          className={cn("cursor-pointer", expanded === id && "ring-primary/50")}
+          onClick={() => toggle(id)}
+        >
+          <CardHeader className="pb-0">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex size-8 items-center justify-center rounded-md bg-primary/10">
+                  <Icon className="size-4 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">{title}</CardTitle>
+                  <CardDescription className="text-xs">{description}</CardDescription>
+                </div>
+              </div>
+              <motion.div
+                animate={{ rotate: expanded === id ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ChevronDown className="size-5 text-muted-foreground" />
+              </motion.div>
+            </div>
+          </CardHeader>
+          <motion.div
+            initial={false}
+            animate={{
+              height: expanded === id ? "auto" : 0,
+              opacity: expanded === id ? 1 : 0,
+            }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <CardContent className="pt-4" onClick={(e) => e.stopPropagation()}>
+              {content}
+            </CardContent>
+          </motion.div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
 function ExperienceCard({ exp, isExpanded, onToggle, index }: {
   exp: typeof experience[0];
   isExpanded: boolean;
@@ -420,7 +534,7 @@ export default function Page() {
               transition={{ duration: 0.5, delay: 0.8 }}
               className="max-w-lg text-muted-foreground"
             >
-              Full stack developer from the UK with 8 years of experience. Currently digital nomading through South America.
+              Full stack developer from the UK with 8 years of experience. Currently digital nomading through {CURRENT_LOCATION}.
               This isn&apos;t just my job—it&apos;s my passion. I run a homelab that my family depends on daily.
             </motion.p>
             <motion.div
@@ -547,62 +661,28 @@ export default function Page() {
 
         <Separator className="my-12" />
 
-        {/* GitHub Stats Section */}
-        <AnimatedSection className="space-y-6">
-          <GitHubStats />
-        </AnimatedSection>
-
-        <Separator className="my-12" />
-
-        {/* Homelab Section */}
+        {/* Skills & Tools Section */}
         <AnimatedSection className="space-y-6">
           <div>
             <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-              <Server className="size-5" />
-              Homelab
+              <Wrench className="size-5" />
+              Skills & Tools
             </h2>
             <p className="text-muted-foreground">
-              My mini-datacenter running production services for family—Nextcloud, Jellyfin, and more
+              Tech-agnostic and always learning—click to explore
             </p>
           </div>
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="flex flex-wrap gap-2"
-          >
-            {homelab.map((item) => (
-              <motion.div key={item} variants={staggerItem}>
-                <Badge variant="outline">{item}</Badge>
-              </motion.div>
+
+          {/* Overview badges - top items from each category */}
+          <div className="flex flex-wrap gap-2">
+            {["TypeScript", "React", "Next.js", "Node.js", "Kubernetes", "AWS"].map((tech) => (
+              <Badge key={tech} variant="secondary">{tech}</Badge>
             ))}
-          </motion.div>
-        </AnimatedSection>
-
-        <Separator className="my-12" />
-
-        {/* Tech Stack Section */}
-        <AnimatedSection className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Tech Stack</h2>
-            <p className="text-muted-foreground">
-              Tech-agnostic and always learning—these are my current tools
-            </p>
+            <Badge variant="outline" className="text-muted-foreground">+{techStack.length - 6} more</Badge>
           </div>
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="flex flex-wrap gap-2"
-          >
-            {techStack.map((tech) => (
-              <motion.div key={tech} variants={staggerItem}>
-                <Badge variant="outline">{tech}</Badge>
-              </motion.div>
-            ))}
-          </motion.div>
+
+          {/* Expandable sections */}
+          <SkillsAccordion />
         </AnimatedSection>
 
         <Separator className="my-12" />
@@ -673,7 +753,7 @@ export default function Page() {
               Let&apos;s Work Together
             </h2>
             <p className="text-muted-foreground">
-              Available for part-time contract work
+              Available for contract work
             </p>
           </div>
 
@@ -694,7 +774,7 @@ export default function Page() {
                     </div>
                     <div>
                       <p className="text-sm font-medium">Location</p>
-                      <p className="text-sm text-muted-foreground">South America</p>
+                      <p className="text-sm text-muted-foreground">{CURRENT_LOCATION}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -747,9 +827,9 @@ export default function Page() {
                   from zero to production.
                 </p>
                 <p className="text-muted-foreground">
-                  Currently travelling through South America as a digital nomad, which means I&apos;m
-                  available for <span className="text-foreground font-medium">part-time work at a reduced rate</span>.
-                  Perfect for startups who need senior experience without the full-time commitment.
+                  Currently travelling through {CURRENT_LOCATION} as a digital nomad, which means I&apos;m
+                  available at a <span className="text-foreground font-medium">reduced rate</span>.
+                  Perfect for startups who need senior experience.
                 </p>
                 <p className="text-muted-foreground">
                   I&apos;m tech-agnostic and adapt to whatever your stack needs. Need a full team?
@@ -794,7 +874,7 @@ export default function Page() {
                 <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
                   <div>
                     <p className="text-2xl font-bold">$400<span className="text-lg font-normal text-muted-foreground">/day</span></p>
-                    <p className="text-sm text-muted-foreground">Reduced rate while travelling • Part-time available</p>
+                    <p className="text-sm text-muted-foreground">Reduced rate while travelling • Available now</p>
                   </div>
                   <motion.a
                     whileHover={{ scale: 1.05 }}
