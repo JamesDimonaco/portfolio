@@ -7,7 +7,7 @@ import { Github, Star, GitFork, Users, Code, Flame } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface GitHubStatsData {
-  publicRepos: number;
+  totalRepos: number;
   totalStars: number;
   followers: number;
   contributions: number;
@@ -85,7 +85,7 @@ const staggerItem = {
 };
 
 const statCards = [
-  { key: "publicRepos", label: "Repositories", icon: GitFork, color: "#a78bfa" },
+  { key: "totalRepos", label: "Repositories", icon: GitFork, color: "#a78bfa" },
   { key: "totalStars", label: "Stars Earned", icon: Star, color: "#fbbf24" },
   { key: "contributions", label: "Contributions", icon: Flame, color: "#34d399" },
   { key: "followers", label: "Followers", icon: Users, color: "#60a5fa" },

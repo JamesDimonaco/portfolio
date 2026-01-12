@@ -11,6 +11,7 @@ interface GitHubRepo {
 
 interface GitHubUser {
   public_repos: number;
+  total_private_repos: number;
   followers: number;
 }
 
@@ -23,7 +24,7 @@ interface ContributionWeek {
 }
 
 interface GitHubStats {
-  publicRepos: number;
+  totalRepos: number;
   totalStars: number;
   followers: number;
   contributions: number;
@@ -31,7 +32,12 @@ interface GitHubStats {
 }
 
 async function fetchGitHubUser(): Promise<GitHubUser> {
-  const res = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}`, {
+  // Use authenticated endpoint to get private repo count
+  const endpoint = GITHUB_TOKEN
+    ? "https://api.github.com/user"
+    : `https://api.github.com/users/${GITHUB_USERNAME}`;
+
+  const res = await fetch(endpoint, {
     headers: {
       ...(GITHUB_TOKEN && { Authorization: `Bearer ${GITHUB_TOKEN}` }),
       Accept: "application/vnd.github.v3+json",
@@ -51,17 +57,23 @@ async function fetchAllRepos(): Promise<GitHubRepo[]> {
   let page = 1;
   const perPage = 100;
 
+  // Use authenticated endpoint to include private repos
+  const baseUrl = GITHUB_TOKEN
+    ? "https://api.github.com/user/repos"
+    : `https://api.github.com/users/${GITHUB_USERNAME}/repos`;
+
   while (true) {
-    const res = await fetch(
-      `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=${perPage}&page=${page}&type=owner`,
-      {
-        headers: {
-          ...(GITHUB_TOKEN && { Authorization: `Bearer ${GITHUB_TOKEN}` }),
-          Accept: "application/vnd.github.v3+json",
-        },
-        next: { revalidate: 3600 },
-      }
-    );
+    const url = GITHUB_TOKEN
+      ? `${baseUrl}?per_page=${perPage}&page=${page}&visibility=all&affiliation=owner,collaborator,organization_member`
+      : `${baseUrl}?per_page=${perPage}&page=${page}&type=owner`;
+
+    const res = await fetch(url, {
+      headers: {
+        ...(GITHUB_TOKEN && { Authorization: `Bearer ${GITHUB_TOKEN}` }),
+        Accept: "application/vnd.github.v3+json",
+      },
+      next: { revalidate: 3600 },
+    });
 
     if (!res.ok) {
       throw new Error(`Failed to fetch repos: ${res.status}`);
@@ -151,7 +163,7 @@ export async function GET() {
     const topLanguages = calculateLanguages(repos);
 
     const stats: GitHubStats = {
-      publicRepos: user.public_repos,
+      totalRepos: repos.length,
       totalStars,
       followers: user.followers,
       contributions,

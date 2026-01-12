@@ -18,6 +18,9 @@ import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { GitHubStats } from "@/components/github-stats";
+import { ScrambleText } from "@/components/scramble-text";
+import { RotatingTypewriter } from "@/components/rotating-typewriter";
+import { CyclingMoreBadge } from "@/components/cycling-more-badge";
 
 // ============================================
 // UPDATE THIS WHEN YOU MOVE TO A NEW LOCATION
@@ -44,31 +47,6 @@ const staggerItem = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
 };
-
-// Typewriter component
-function Typewriter({ text, className }: { text: string; className?: string }) {
-  const [displayText, setDisplayText] = useState("");
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    if (currentIndex < text.length) {
-      const timeout = setTimeout(() => {
-        setDisplayText((prev) => prev + text[currentIndex]);
-        setCurrentIndex((prev) => prev + 1);
-      }, 80);
-      return () => clearTimeout(timeout);
-    }
-  }, [currentIndex, text]);
-
-  return (
-    <span className={className}>
-      {displayText}
-      {currentIndex < text.length && (
-        <span className="animate-pulse text-primary">|</span>
-      )}
-    </span>
-  );
-}
 
 // Animated section wrapper
 function AnimatedSection({ children, className, delay = 0, id }: { children: React.ReactNode; className?: string; delay?: number; id?: string }) {
@@ -243,6 +221,7 @@ const techStack = [
   "React Native",
   "Expo",
   "Node.js",
+  "Hono",
   "FastAPI",
   "Prisma",
   "PostgreSQL",
@@ -257,6 +236,9 @@ const techStack = [
   "HTML5",
   "CSS3",
 ];
+
+// Featured techs shown in overview (rest are in expandable)
+const featuredTechs = ["TypeScript", "React", "Next.js", "Node.js", "Kubernetes", "AWS"];
 
 const services = [
   {
@@ -394,11 +376,10 @@ function SkillsAccordion() {
   );
 }
 
-function ExperienceCard({ exp, isExpanded, onToggle, index }: {
+function ExperienceCard({ exp, isExpanded, onToggle }: {
   exp: typeof experience[0];
   isExpanded: boolean;
   onToggle: () => void;
-  index: number;
 }) {
   const hasHighlights = exp.highlights.length > 0;
 
@@ -526,12 +507,18 @@ export default function Page() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="text-3xl font-bold tracking-tight"
+                className="text-3xl font-bold tracking-tight cursor-default"
               >
-                James Dimonaco
+                <ScrambleText text="James Dimonaco" delay={400} />
               </motion.h1>
               <p className="text-lg text-muted-foreground">
-                <Typewriter text="Full Stack Developer" />
+                <RotatingTypewriter
+                  texts={[
+                    "Full Stack Developer",
+                    "DevOps Engineer",
+                    "Infrastructure Enthusiast",
+                  ]}
+                />
               </p>
             </div>
             <motion.p
@@ -607,13 +594,12 @@ export default function Page() {
             variants={staggerContainer}
             className="grid gap-4"
           >
-            {experience.map((exp, index) => (
+            {experience.map((exp) => (
               <ExperienceCard
                 key={exp.company}
                 exp={exp}
                 isExpanded={expandedExp === exp.company}
                 onToggle={() => toggleExp(exp.company)}
-                index={index}
               />
             ))}
           </motion.div>
@@ -680,11 +666,11 @@ export default function Page() {
           </div>
 
           {/* Overview badges - top items from each category */}
-          <div className="flex flex-wrap gap-2">
-            {["TypeScript", "React", "Next.js", "Node.js", "Kubernetes", "AWS"].map((tech) => (
+          <div className="flex flex-wrap items-center gap-2">
+            {featuredTechs.map((tech) => (
               <Badge key={tech} variant="secondary">{tech}</Badge>
             ))}
-            <Badge variant="outline" className="text-muted-foreground">+{techStack.length - 6} more</Badge>
+            <CyclingMoreBadge items={techStack} featured={featuredTechs} />
           </div>
 
           {/* Expandable sections */}
