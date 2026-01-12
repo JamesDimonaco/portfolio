@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench } from "lucide-react";
+import Image from "next/image";
 import {
   Card,
   CardHeader,
@@ -508,11 +509,16 @@ export default function Page() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="size-32 shrink-0 overflow-hidden rounded-full bg-muted ring-2 ring-primary"
+            className="size-32 shrink-0 overflow-hidden rounded-full ring-2 ring-primary"
           >
-            <div className="flex size-full items-center justify-center text-4xl text-muted-foreground">
-              JD
-            </div>
+            <Image
+              src="/profile.jpg"
+              alt="James Dimonaco"
+              width={128}
+              height={128}
+              className="size-full object-cover"
+              priority
+            />
           </motion.div>
           <div className="space-y-4">
             <div>
