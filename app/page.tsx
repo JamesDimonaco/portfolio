@@ -225,6 +225,8 @@ const techStack = [
   "FastAPI",
   "Prisma",
   "PostgreSQL",
+  "MongoDB",
+  "Convex",
   "Firebase",
   "AWS",
   "Google Cloud",
