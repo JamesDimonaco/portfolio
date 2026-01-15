@@ -70,6 +70,13 @@ function AnimatedSection({ children, className, delay = 0, id }: { children: Rea
 
 const projects = [
   {
+    title: "Composure",
+    description: "A TUI dashboard to audit, optimize, and visualize Docker-Compose stacks in real-time.",
+    tech: ["Python", "Docker"],
+    github: "https://github.com/JamesDimonaco/composure",
+    live: "https://pypi.org/project/composure/",
+  },
+  {
     title: "LexiKey",
     description: "A TypeScript project for enhanced keyboard interactions and text processing.",
     tech: ["TypeScript"],
@@ -214,8 +221,8 @@ const homelab = [
 const techStack = [
   "TypeScript",
   "JavaScript",
-  "Rust",
   "Python",
+  "YAML",
   "Next.js",
   "React",
   "React Native",
