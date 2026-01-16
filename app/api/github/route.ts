@@ -7,7 +7,11 @@ interface GitHubRepo {
   stargazers_count: number;
   language: string | null;
   fork: boolean;
+  owner: { login: string };
 }
+
+// Orgs to exclude from stats (repos you're a member of but don't want counted)
+const EXCLUDED_ORGS = ["Yes-Theory-Fam"];
 
 interface GitHubUser {
   public_repos: number;
@@ -64,7 +68,7 @@ async function fetchAllRepos(): Promise<GitHubRepo[]> {
 
   while (true) {
     const url = GITHUB_TOKEN
-      ? `${baseUrl}?per_page=${perPage}&page=${page}&visibility=all&affiliation=owner,collaborator,organization_member`
+      ? `${baseUrl}?per_page=${perPage}&page=${page}&visibility=all&affiliation=owner,collaborator`
       : `${baseUrl}?per_page=${perPage}&page=${page}&type=owner`;
 
     const res = await fetch(url, {
@@ -157,7 +161,7 @@ export async function GET() {
     ]);
 
     const totalStars = repos
-      .filter((repo) => !repo.fork)
+      .filter((repo) => !repo.fork && !EXCLUDED_ORGS.includes(repo.owner.login))
       .reduce((sum, repo) => sum + repo.stargazers_count, 0);
 
     const topLanguages = calculateLanguages(repos);
