@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench } from "lucide-react";
+import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import {
   Card,
@@ -25,7 +25,7 @@ import { CyclingMoreBadge } from "@/components/cycling-more-badge";
 // ============================================
 // UPDATE THIS WHEN YOU MOVE TO A NEW LOCATION
 // ============================================
-const CURRENT_LOCATION = "Colombia";
+const CURRENT_LOCATION = "Central America";
 
 // Animation variants
 const fadeInUp = {
@@ -70,6 +70,13 @@ function AnimatedSection({ children, className, delay = 0, id }: { children: Rea
 
 const projects = [
   {
+    title: "Timezone Map",
+    description: "An interactive world timezone map with 60+ cities, live time zones, and real-time user presence.",
+    tech: ["TypeScript", "Next.js", "MapLibre", "Convex"],
+    github: "https://github.com/JamesDimonaco/timezone-map",
+    live: "https://timezones.live/",
+  },
+  {
     title: "Composure",
     description: "A TUI dashboard to audit, optimize, and visualize Docker-Compose stacks in real-time.",
     tech: ["Python", "Docker"],
@@ -108,22 +115,22 @@ const projects = [
 
 const experience = [
   {
+    company: "PinTraveler",
+    role: "Senior Full Stack Developer",
+    period: "2025 - Present",
+    status: "active" as const,
+    summary: "Creating travel experiences through innovative digital products.",
+    highlights: [],
+    link: "https://github.com/PinTraveler",
+  },
+  {
     company: "Dama Health",
-    role: "Full Stack Developer",
+    role: "Senior Full Stack Developer",
     period: "2024 - Present",
     status: "active" as const,
     summary: "Building healthcare solutions with modern web technologies.",
     highlights: [],
     link: "https://github.com/damahealth",
-  },
-  {
-    company: "PinTraveler",
-    role: "Full Stack Developer",
-    period: "2024 - Present",
-    status: "active" as const,
-    summary: "Creating travel experiences through innovative digital products.",
-    highlights: [],
-    link: "https://github.com/PinTraveler",
   },
   {
     company: "Where You At",
@@ -241,6 +248,13 @@ const techStack = [
   "Docker",
   "Kubernetes",
   "Nginx",
+  "Claude Code",
+  "Cursor",
+  "CodeRabbit",
+  "PostHog",
+  "Google Search Console",
+  "Linear",
+  "Jira",
   "Figma",
   "HTML5",
   "CSS3",
@@ -264,7 +278,7 @@ const services = [
   },
   {
     title: "SEO & Performance",
-    description: "Technical SEO, Core Web Vitals optimisation, and site speed improvements",
+    description: "Technical SEO, Google Search Console, Core Web Vitals optimisation, and site speed improvements",
   },
   {
     title: "Team Leadership",
@@ -523,7 +537,7 @@ export default function Page() {
               <p className="text-lg text-muted-foreground">
                 <RotatingTypewriter
                   texts={[
-                    "Full Stack Developer",
+                    "Senior Full Stack Developer",
                     "DevOps Engineer",
                     "Infrastructure Enthusiast",
                   ]}
@@ -537,7 +551,7 @@ export default function Page() {
               className="max-w-lg text-muted-foreground"
             >
               Full stack developer from the UK with 8 years of experience. Currently digital nomading through {CURRENT_LOCATION}.
-              This isn&apos;t just my job—it&apos;s my passion. I run a homelab that my family depends on daily.
+              This isn&apos;t just my job—it&apos;s my passion. I run a homelab and treat it like a mini datacentre. I build small side projects to fix the random issues I find while travelling—and hope they can help others too.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -578,6 +592,15 @@ export default function Page() {
                 className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
               >
                 <Mail className="size-4" />
+              </a>
+              <a
+                href="https://wa.me/447402440605"
+                target="_blank"
+                rel="noopener"
+                aria-label="WhatsApp"
+                className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+              >
+                <MessageCircle className="size-4" />
               </a>
             </motion.div>
           </div>
@@ -754,7 +777,7 @@ export default function Page() {
               Let&apos;s Work Together
             </h2>
             <p className="text-muted-foreground">
-              Available for contract work
+              Open to side projects, contract roles, and everything in between
             </p>
           </div>
 
@@ -825,17 +848,23 @@ export default function Page() {
                 <p className="text-muted-foreground">
                   I started coding young and never stopped. With 8 years of hands-on experience,
                   I&apos;ve led teams of up to 8 people (6 devs, QA, and designer) and shipped products
-                  from zero to production.
+                  from zero to production. Communicating with stakeholders and non-technical partners
+                  has been a regular part of my experience.
+                </p>
+                <p className="text-muted-foreground">
+                  My workflow is built around modern AI tooling—<span className="text-foreground font-medium">Claude Code</span> and{" "}
+                  <span className="text-foreground font-medium">Cursor</span> for development,{" "}
+                  <span className="text-foreground font-medium">CodeRabbit</span> for code review, and{" "}
+                  <span className="text-foreground font-medium">PostHog</span> for analytics, and{" "}
+                  <span className="text-foreground font-medium">Linear</span> for task management and automating workflows.
+                  I also have strong <span className="text-foreground font-medium">SEO</span> experience
+                  with Google Search Console across multiple live apps.
+                  With these tools and my broad experience, I can often do the work of multiple specialists.
                 </p>
                 <p className="text-muted-foreground">
                   Currently travelling through {CURRENT_LOCATION} as a digital nomad, which means I&apos;m
                   available at a <span className="text-foreground font-medium">reduced rate</span>.
-                  Perfect for startups who need senior experience.
-                </p>
-                <p className="text-muted-foreground">
-                  I&apos;m tech-agnostic and adapt to whatever your stack needs. Need a full team?
-                  With modern AI tooling and my broad experience, I can often do the work of
-                  multiple specialists for early-stage startups.
+                  I&apos;m tech-agnostic and adapt to whatever your stack needs.
                 </p>
               </CardContent>
             </Card>
@@ -871,21 +900,38 @@ export default function Page() {
             transition={{ duration: 0.5 }}
           >
             <Card className="border-primary/50 bg-primary/5">
-              <CardContent className="pt-6">
+              <CardContent className="pt-6 space-y-4">
+                <p className="text-muted-foreground text-center sm:text-left">
+                  I&apos;m open to a variety of opportunities—from simple websites to complex SaaS platforms,
+                  including side projects, contract roles, and long-term partnerships.
+                </p>
                 <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
                   <div>
                     <p className="text-2xl font-bold">$400<span className="text-lg font-normal text-muted-foreground">/day</span></p>
                     <p className="text-sm text-muted-foreground">Reduced rate while travelling • Available now</p>
                   </div>
-                  <motion.a
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    href="mailto:James@dimonaco.co.uk?subject=Project Inquiry"
-                    className={cn(buttonVariants({ variant: "default", size: "lg" }))}
-                  >
-                    <Mail className="size-4" />
-                    Get in Touch
-                  </motion.a>
+                  <div className="flex gap-2">
+                    <motion.a
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      href="mailto:James@dimonaco.co.uk?subject=Project Inquiry"
+                      className={cn(buttonVariants({ variant: "default", size: "lg" }))}
+                    >
+                      <Mail className="size-4" />
+                      Get in Touch
+                    </motion.a>
+                    <motion.a
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      href="https://wa.me/447402440605"
+                      target="_blank"
+                      rel="noopener"
+                      className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
+                    >
+                      <MessageCircle className="size-4" />
+                      WhatsApp
+                    </motion.a>
+                  </div>
                 </div>
               </CardContent>
             </Card>
