@@ -21,6 +21,7 @@ import { GitHubStats } from "@/components/github-stats";
 import { ScrambleText } from "@/components/scramble-text";
 import { RotatingTypewriter } from "@/components/rotating-typewriter";
 import { CyclingMoreBadge } from "@/components/cycling-more-badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 // ============================================
 // UPDATE THIS WHEN YOU MOVE TO A NEW LOCATION
@@ -321,6 +322,48 @@ function SkillsAccordion() {
 
   const sections = [
     {
+      id: "certifications",
+      title: certifications[0].title,
+      icon: Award,
+      description: `${certifications[0].issuer} · ${certifications[0].date}`,
+      content: (
+        <div className="space-y-3">
+          <div className="flex gap-2">
+            <a
+              href={certifications[0].file}
+              target="_blank"
+              rel="noopener"
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+            >
+              <ExternalLink className="size-4" />
+              View Certificate
+            </a>
+          </div>
+          {certifications.length > 1 && (
+            <div className="space-y-2 border-t border-border pt-3">
+              <p className="text-xs font-medium text-muted-foreground">Other certifications</p>
+              {certifications.slice(1).map((cert) => (
+                <div key={cert.title} className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm">{cert.title}</p>
+                    <p className="text-xs text-muted-foreground">{cert.issuer} · {cert.date}</p>
+                  </div>
+                  <a
+                    href={cert.file}
+                    target="_blank"
+                    rel="noopener"
+                    className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+                  >
+                    <ExternalLink className="size-3" />
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ),
+    },
+    {
       id: "github",
       title: "GitHub Activity",
       icon: Github,
@@ -543,13 +586,25 @@ function AvailabilityCalendar() {
 
 export default function Page() {
   const [expandedExp, setExpandedExp] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("experience");
   const experienceRef = useRef(null);
   const experienceInView = useInView(experienceRef, { once: true, margin: "-100px" });
   const statsRef = useRef(null);
   const statsInView = useInView(statsRef, { once: true, margin: "-50px" });
+  const heroRef = useRef<HTMLElement>(null);
+  const heroInView = useInView(heroRef, { margin: "0px" });
 
   const scrollToContact = () => {
     document.getElementById("work-together")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const switchTabAndScroll = (tab: string) => {
+    setActiveTab(tab);
+    scrollToSection("portfolio");
   };
 
   const toggleExp = (company: string) => {
@@ -561,6 +616,7 @@ export default function Page() {
       <div className="mx-auto max-w-4xl px-6 py-16">
         {/* Hero Section */}
         <motion.section
+          ref={heroRef}
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -596,7 +652,8 @@ export default function Page() {
                   texts={[
                     "Senior Full Stack Developer",
                     "DevOps Engineer",
-                    "Infrastructure Enthusiast",
+                    "Cloud & Infrastructure Engineer",
+                    "Team Lead & Scrum Master",
                   ]}
                 />
               </p>
@@ -663,227 +720,212 @@ export default function Page() {
           </div>
         </motion.section>
 
+        {/* Sticky Navigation */}
+        <motion.nav
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: heroInView ? 0 : 1, y: heroInView ? -10 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-md pointer-events-auto"
+          style={{ pointerEvents: heroInView ? "none" : "auto" }}
+        >
+          <div className="mx-auto max-w-4xl px-6">
+            <div className="flex h-12 items-center justify-between">
+              <span className="text-sm font-semibold">JD</span>
+              <div className="flex items-center gap-1">
+                {[
+                  { label: "Experience", action: () => switchTabAndScroll("experience") },
+                  { label: "Projects", action: () => switchTabAndScroll("projects") },
+                  { label: "Skills", action: () => switchTabAndScroll("skills") },
+                  { label: "Testimonials", action: () => scrollToSection("testimonials") },
+                  { label: "Contact", action: () => scrollToSection("work-together") },
+                ].map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={item.action}
+                    className="rounded-md px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.nav>
+
         <Separator className="my-12" />
 
-        {/* Experience Section */}
-        <AnimatedSection className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-              <Briefcase className="size-5" />
-              Experience
-            </h2>
-            <p className="text-muted-foreground">
-              8 years across startups and enterprises—click to expand
-            </p>
-          </div>
-          <motion.div
-            ref={experienceRef}
-            initial="hidden"
-            animate={experienceInView ? "visible" : "hidden"}
-            variants={staggerContainer}
-            className="grid gap-4"
-          >
-            {experience.map((exp) => (
-              <ExperienceCard
-                key={exp.company}
-                exp={exp}
-                isExpanded={expandedExp === exp.company}
-                onToggle={() => toggleExp(exp.company)}
-              />
-            ))}
-          </motion.div>
+        {/* Portfolio Tabs Section */}
+        <AnimatedSection id="portfolio" className="space-y-6 scroll-mt-16">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as string)}>
+            <TabsList className="w-full">
+              <TabsTrigger value="experience" className="flex-1 gap-1.5">
+                <Briefcase className="size-3.5" />
+                Experience
+              </TabsTrigger>
+              <TabsTrigger value="projects" className="flex-1 gap-1.5">
+                <Code className="size-3.5" />
+                Projects
+              </TabsTrigger>
+              <TabsTrigger value="skills" className="flex-1 gap-1.5">
+                <Wrench className="size-3.5" />
+                Skills
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Experience Tab */}
+            <TabsContent value="experience" className="space-y-4 pt-2">
+              <p className="text-sm text-muted-foreground">
+                8 years across startups and enterprises—click to expand
+              </p>
+              <motion.div
+                ref={experienceRef}
+                initial="hidden"
+                animate={experienceInView ? "visible" : "hidden"}
+                variants={staggerContainer}
+                className="grid gap-4"
+              >
+                {experience.map((exp) => (
+                  <ExperienceCard
+                    key={exp.company}
+                    exp={exp}
+                    isExpanded={expandedExp === exp.company}
+                    onToggle={() => toggleExp(exp.company)}
+                  />
+                ))}
+              </motion.div>
+            </TabsContent>
+
+            {/* Projects Tab */}
+            <TabsContent value="projects" className="space-y-4 pt-2">
+              <p className="text-sm text-muted-foreground">
+                Side projects and things I&apos;ve built
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {projects.map((project, index) => (
+                  <motion.div
+                    key={project.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                  >
+                    <Card size="sm">
+                      <CardHeader>
+                        <CardTitle>{project.title}</CardTitle>
+                        <CardDescription>{project.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex flex-wrap gap-1.5">
+                          {project.tech.map((tech) => (
+                            <Badge key={tech} variant="secondary">
+                              {tech}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                      <CardFooter className="gap-2">
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener"
+                          className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+                        >
+                          <Github className="size-4" />
+                          Code
+                        </a>
+                        <a
+                          href={project.live}
+                          target="_blank"
+                          rel="noopener"
+                          className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+                        >
+                          <ExternalLink className="size-4" />
+                          Live
+                        </a>
+                      </CardFooter>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </TabsContent>
+
+            {/* Skills Tab */}
+            <TabsContent value="skills" className="space-y-4 pt-2">
+              <p className="text-sm text-muted-foreground">
+                Tech-agnostic and always learning—click to explore
+              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                {featuredTechs.map((tech) => (
+                  <Badge key={tech} variant="secondary">{tech}</Badge>
+                ))}
+                <CyclingMoreBadge items={techStack} featured={featuredTechs} />
+              </div>
+              <SkillsAccordion />
+            </TabsContent>
+          </Tabs>
         </AnimatedSection>
 
         <Separator className="my-12" />
 
         {/* Testimonials Section */}
         {testimonials.length > 0 && (
-          <AnimatedSection className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-                <Quote className="size-5" />
-                What People Say
-              </h2>
-              <p className="text-muted-foreground">
-                From people I&apos;ve worked with
-              </p>
-            </div>
-            <div className="grid gap-4">
-              {testimonials.map((t, index) => (
-                <motion.div
-                  key={t.name}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                >
-                  <Card>
-                    <CardContent className="space-y-4">
-                      <p className="text-lg italic text-muted-foreground">
-                        &ldquo;{t.quote}&rdquo;
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium">{t.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {t.role} · {t.company}
-                          </p>
+          <>
+            <AnimatedSection id="testimonials" className="space-y-6 scroll-mt-16">
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+                  <Quote className="size-5" />
+                  What People Say
+                </h2>
+                <p className="text-muted-foreground">
+                  From people I&apos;ve worked with
+                </p>
+              </div>
+              <div className="grid gap-4">
+                {testimonials.map((t, index) => (
+                  <motion.div
+                    key={t.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                  >
+                    <Card>
+                      <CardContent className="space-y-4">
+                        <p className="text-lg italic text-muted-foreground">
+                          &ldquo;{t.quote}&rdquo;
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium">{t.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {t.role} · {t.company}
+                            </p>
+                          </div>
+                          {t.linkedin && (
+                            <a
+                              href={t.linkedin}
+                              target="_blank"
+                              rel="noopener"
+                              aria-label={`${t.name} on LinkedIn`}
+                              className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+                            >
+                              <Linkedin className="size-4" />
+                            </a>
+                          )}
                         </div>
-                        {t.linkedin && (
-                          <a
-                            href={t.linkedin}
-                            target="_blank"
-                            rel="noopener"
-                            aria-label={`${t.name} on LinkedIn`}
-                            className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
-                          >
-                            <Linkedin className="size-4" />
-                          </a>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </AnimatedSection>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </AnimatedSection>
+
+            <Separator className="my-12" />
+          </>
         )}
 
-        <Separator className="my-12" />
-
-        {/* Certifications Section */}
-        <AnimatedSection className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Certifications</h2>
-            <p className="text-muted-foreground">
-              Professional training and credentials
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {certifications.map((cert, index) => (
-              <motion.div
-                key={cert.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
-                <Card size="sm">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Award className="size-4 text-primary" />
-                      {cert.title}
-                    </CardTitle>
-                    <CardDescription>
-                      {cert.issuer} &middot; {cert.date}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardFooter>
-                    <a
-                      href={cert.file}
-                      target="_blank"
-                      rel="noopener"
-                      className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-                    >
-                      <ExternalLink className="size-4" />
-                      View Certificate
-                    </a>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </AnimatedSection>
-
-        <Separator className="my-12" />
-
-        {/* Skills & Tools Section */}
-        <AnimatedSection className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
-              <Wrench className="size-5" />
-              Skills & Tools
-            </h2>
-            <p className="text-muted-foreground">
-              Tech-agnostic and always learning—click to explore
-            </p>
-          </div>
-
-          {/* Overview badges - top items from each category */}
-          <div className="flex flex-wrap items-center gap-2">
-            {featuredTechs.map((tech) => (
-              <Badge key={tech} variant="secondary">{tech}</Badge>
-            ))}
-            <CyclingMoreBadge items={techStack} featured={featuredTechs} />
-          </div>
-
-          {/* Expandable sections */}
-          <SkillsAccordion />
-        </AnimatedSection>
-
-        <Separator className="my-12" />
-
-        {/* Projects Section */}
-        <AnimatedSection className="space-y-6">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Projects</h2>
-            <p className="text-muted-foreground">
-              Side projects and things I&apos;ve built
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {projects.map((project, index) => (
-              <motion.div
-                key={project.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-              >
-                <Card size="sm">
-                  <CardHeader>
-                    <CardTitle>{project.title}</CardTitle>
-                    <CardDescription>{project.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-1.5">
-                      {project.tech.map((tech) => (
-                        <Badge key={tech} variant="secondary">
-                          {tech}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                  <CardFooter className="gap-2">
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener"
-                      className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-                    >
-                      <Github className="size-4" />
-                      Code
-                    </a>
-                    <a
-                      href={project.live}
-                      target="_blank"
-                      rel="noopener"
-                      className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-                    >
-                      <ExternalLink className="size-4" />
-                      Live
-                    </a>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </AnimatedSection>
-
-        <Separator className="my-12" />
-
         {/* Work Together Section */}
-        <AnimatedSection id="work-together" className="space-y-8 scroll-mt-8">
+        <AnimatedSection id="work-together" className="space-y-8 scroll-mt-16">
           <div>
             <h2 className="text-2xl font-semibold tracking-tight">
               Let&apos;s Work Together
