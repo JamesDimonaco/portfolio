@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench, MessageCircle } from "lucide-react";
+import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench, MessageCircle, Quote } from "lucide-react";
 import Image from "next/image";
 import {
   Card,
@@ -290,6 +290,28 @@ const services = [
   },
 ];
 
+// ============================================
+// UPDATE THIS TO SET MONTHLY AVAILABILITY
+// Key format: "YYYY-MM" — any month not listed defaults to "good"
+// ============================================
+const availability: Record<string, "good" | "ok" | "limited"> = {
+  "2026-02": "ok",
+  "2026-03": "limited",
+  "2026-04": "ok",
+};
+
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const testimonials = [
+  {
+    quote: "James is super passionate about his work and will give 100% to deliver whatever is needed.",
+    name: "Andrew Muzzelle",
+    role: "Chief Digital Officer",
+    company: "Where You At",
+    linkedin: "https://www.linkedin.com/in/muzzelle/",
+  },
+];
+
 function SkillsAccordion() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
@@ -484,6 +506,41 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
   );
 }
 
+function AvailabilityCalendar() {
+  const now = new Date();
+  const months = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    return { label: MONTH_NAMES[d.getMonth()], status: availability[key] || "good" };
+  });
+
+  return (
+    <div className="space-y-3">
+      <p className="text-sm font-medium">Availability</p>
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+        {months.map(({ label, status }) => (
+          <div key={label} className="flex flex-col items-center gap-1.5">
+            <span className="text-xs text-muted-foreground">{label}</span>
+            <div
+              className={cn(
+                "h-2 w-full rounded-full",
+                status === "good" && "bg-green-500",
+                status === "ok" && "bg-yellow-500",
+                status === "limited" && "bg-red-500",
+              )}
+            />
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+        <span className="flex items-center gap-1.5"><span className="inline-block size-2 rounded-full bg-green-500" /> Available</span>
+        <span className="flex items-center gap-1.5"><span className="inline-block size-2 rounded-full bg-yellow-500" /> Some availability</span>
+        <span className="flex items-center gap-1.5"><span className="inline-block size-2 rounded-full bg-red-500" /> Limited</span>
+      </div>
+    </div>
+  );
+}
+
 export default function Page() {
   const [expandedExp, setExpandedExp] = useState<string | null>(null);
   const experienceRef = useRef(null);
@@ -636,6 +693,61 @@ export default function Page() {
             ))}
           </motion.div>
         </AnimatedSection>
+
+        <Separator className="my-12" />
+
+        {/* Testimonials Section */}
+        {testimonials.length > 0 && (
+          <AnimatedSection className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+                <Quote className="size-5" />
+                What People Say
+              </h2>
+              <p className="text-muted-foreground">
+                From people I&apos;ve worked with
+              </p>
+            </div>
+            <div className="grid gap-4">
+              {testimonials.map((t, index) => (
+                <motion.div
+                  key={t.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                >
+                  <Card>
+                    <CardContent className="space-y-4">
+                      <p className="text-lg italic text-muted-foreground">
+                        &ldquo;{t.quote}&rdquo;
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium">{t.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {t.role} · {t.company}
+                          </p>
+                        </div>
+                        {t.linkedin && (
+                          <a
+                            href={t.linkedin}
+                            target="_blank"
+                            rel="noopener"
+                            aria-label={`${t.name} on LinkedIn`}
+                            className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+                          >
+                            <Linkedin className="size-4" />
+                          </a>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </AnimatedSection>
+        )}
 
         <Separator className="my-12" />
 
@@ -892,7 +1004,7 @@ export default function Page() {
             </motion.div>
           </div>
 
-          {/* Rate & CTA */}
+          {/* Availability & CTA */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -900,38 +1012,36 @@ export default function Page() {
             transition={{ duration: 0.5 }}
           >
             <Card className="border-primary/50 bg-primary/5">
-              <CardContent className="pt-6 space-y-4">
+              <CardContent className="pt-6 space-y-5">
                 <p className="text-muted-foreground text-center sm:text-left">
                   I&apos;m open to a variety of opportunities—from simple websites to complex SaaS platforms,
                   including side projects, contract roles, and long-term partnerships.
                 </p>
-                <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
-                  <div>
-                    <p className="text-2xl font-bold">$400<span className="text-lg font-normal text-muted-foreground">/day</span></p>
-                    <p className="text-sm text-muted-foreground">Reduced rate while travelling • Available now</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <motion.a
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      href="mailto:James@dimonaco.co.uk?subject=Project Inquiry"
-                      className={cn(buttonVariants({ variant: "default", size: "lg" }))}
-                    >
-                      <Mail className="size-4" />
-                      Get in Touch
-                    </motion.a>
-                    <motion.a
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      href="https://wa.me/447402440605"
-                      target="_blank"
-                      rel="noopener"
-                      className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
-                    >
-                      <MessageCircle className="size-4" />
-                      WhatsApp
-                    </motion.a>
-                  </div>
+
+                {/* Availability calendar */}
+                <AvailabilityCalendar />
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
+                  <motion.a
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    href="mailto:James@dimonaco.co.uk?subject=Project Inquiry"
+                    className={cn(buttonVariants({ variant: "default", size: "lg" }), "w-full sm:w-auto")}
+                  >
+                    <Mail className="size-4" />
+                    Get in Touch
+                  </motion.a>
+                  <motion.a
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    href="https://wa.me/447402440605"
+                    target="_blank"
+                    rel="noopener"
+                    className={cn(buttonVariants({ variant: "outline", size: "lg" }), "w-full sm:w-auto")}
+                  >
+                    <MessageCircle className="size-4" />
+                    WhatsApp
+                  </motion.a>
                 </div>
               </CardContent>
             </Card>
