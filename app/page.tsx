@@ -305,6 +305,13 @@ const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Se
 
 const testimonials = [
   {
+    quote: "I've had the pleasure of working with James on two projects, Pin Traveler and WYA, and he's the person you want on your team. He's your go-to for anything in software, especially full-stack development. He combines his technical expertise with calm, professional leadership, takes on complex challenges without hesitation, and consistently delivers high quality products with passion.",
+    name: "Mehmet Can Alaca",
+    role: "Senior iOS Developer & Co-Founder",
+    company: "Pin Traveler",
+    linkedin: "https://www.linkedin.com/in/mehmetcanalaca/",
+  },
+  {
     quote: "James is super passionate about his work and will give 100% to deliver whatever is needed.",
     name: "Andrew Muzzelle",
     role: "Chief Digital Officer",
