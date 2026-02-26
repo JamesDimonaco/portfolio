@@ -107,8 +107,8 @@ const projects = [
   },
   {
     title: "Trek Together",
-    description: "A collaborative hiking and trekking companion application.",
-    tech: ["TypeScript", "React Native"],
+    description: "A location-based social platform for hikers and trekkers. GPS-powered city chat rooms, real-time messaging, and seamless anonymous-to-authenticated flows. My most active project.",
+    tech: ["TypeScript", "Next.js", "Convex", "Clerk"],
     github: "https://github.com/jamesdimonaco/trek-together",
     live: "https://www.trektogether.app/",
   },
@@ -129,8 +129,13 @@ const experience = [
     role: "Senior Full Stack Developer",
     period: "2024 - Present",
     status: "active" as const,
-    summary: "Building healthcare solutions with modern web technologies.",
-    highlights: [],
+    summary: "London-based healthtech startup using genetic data to predict and prevent health conditions, primarily focused on women\u2019s health in the US market.",
+    highlights: [
+      "Took over full technical ownership as the outgoing CTO transitioned out",
+      "Maintained and improved the existing platform across both the research and commercial arms",
+      "Optimised AWS infrastructure, delivering significant cost savings",
+      "Built new revenue-generating products including an embeddable sales funnel for client websites",
+    ],
     link: "https://github.com/damahealth",
   },
   {
@@ -266,28 +271,28 @@ const featuredTechs = ["TypeScript", "React", "Next.js", "Node.js", "Kubernetes"
 
 const services = [
   {
-    title: "Greenfield Web Applications",
-    description: "Full-stack web apps from scratch using Next.js, React, and modern tooling",
+    title: "Idea to Shipped Product",
+    description: "Take your concept from zero to production — web, mobile, or both",
   },
   {
-    title: "Mobile Development",
-    description: "Cross-platform apps with React Native and Expo",
+    title: "AI-Augmented Development",
+    description: "Ship faster with AI agent workflows — one person, team-level output",
   },
   {
     title: "Infrastructure & DevOps",
-    description: "Server setup, Kubernetes, CI/CD pipelines, and cloud architecture",
+    description: "Cloud architecture, Kubernetes, CI/CD pipelines, and cost optimisation",
   },
   {
-    title: "SEO & Performance",
-    description: "Technical SEO, Google Search Console, Core Web Vitals optimisation, and site speed improvements",
+    title: "SEO & Growth",
+    description: "Technical SEO, Google Search Console, Core Web Vitals, and performance",
   },
   {
-    title: "Team Leadership",
-    description: "Development process setup, code reviews, and mentoring",
+    title: "Technical Leadership",
+    description: "Code review, architecture decisions, team setup, and mentoring",
   },
   {
-    title: "AI Integration",
-    description: "Modern AI tooling and workflows to supercharge your team",
+    title: "Rescue & Takeover",
+    description: "Inherit existing codebases, stabilise, and improve — I\u2019ve done it before",
   },
 ];
 
@@ -657,6 +662,7 @@ export default function Page() {
               <p className="text-lg text-muted-foreground">
                 <RotatingTypewriter
                   texts={[
+                    "Product Engineer",
                     "Senior Full Stack Developer",
                     "DevOps Engineer",
                     "Cloud & Infrastructure Engineer",
@@ -671,8 +677,9 @@ export default function Page() {
               transition={{ duration: 0.5, delay: 0.8 }}
               className="max-w-lg text-muted-foreground"
             >
-              Full stack developer from the UK with 8 years of experience. Currently digital nomading through {CURRENT_LOCATION}.
-              This isn&apos;t just my job—it&apos;s my passion. I run a homelab and treat it like a mini datacentre. I build small side projects to fix the random issues I find while travelling—and hope they can help others too.
+              Product engineer and technical generalist from the UK with 8 years of experience. I don&apos;t just write code—I architect solutions, manage AI agents, review their output, and ship complete products. Currently digital nomading through {CURRENT_LOCATION}, building side projects like{" "}
+              <a href="https://www.trektogether.app/" target="_blank" rel="noopener" className="text-foreground font-medium underline underline-offset-4 hover:text-primary transition-colors">Trek Together</a>
+              {" "}to solve real problems I find while travelling.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -1013,19 +1020,20 @@ export default function Page() {
                   has been a regular part of my experience.
                 </p>
                 <p className="text-muted-foreground">
-                  My workflow is built around modern AI tooling—<span className="text-foreground font-medium">Claude Code</span> and{" "}
-                  <span className="text-foreground font-medium">Cursor</span> for development,{" "}
-                  <span className="text-foreground font-medium">CodeRabbit</span> for code review, and{" "}
-                  <span className="text-foreground font-medium">PostHog</span> for analytics, and{" "}
-                  <span className="text-foreground font-medium">Linear</span> for task management and automating workflows.
-                  I also have strong <span className="text-foreground font-medium">SEO</span> experience
-                  with Google Search Console across multiple live apps.
-                  With these tools and my broad experience, I can often do the work of multiple specialists.
+                  I work as a <span className="text-foreground font-medium">product engineer</span>, not just a developer.
+                  My role is to architect, review, and ship—using AI agents as my engineering team.
+                  I manage workflows with <span className="text-foreground font-medium">Claude Code</span> and{" "}
+                  <span className="text-foreground font-medium">Cursor</span>, review code with{" "}
+                  <span className="text-foreground font-medium">CodeRabbit</span>, track analytics with{" "}
+                  <span className="text-foreground font-medium">PostHog</span>, and manage delivery with{" "}
+                  <span className="text-foreground font-medium">Linear</span>.
+                  This makes me a force multiplier—one person delivering what traditionally takes a team.
                 </p>
                 <p className="text-muted-foreground">
-                  Currently travelling through {CURRENT_LOCATION} as a digital nomad, which means I&apos;m
-                  available at a <span className="text-foreground font-medium">reduced rate</span>.
-                  I&apos;m tech-agnostic and adapt to whatever your stack needs.
+                  I&apos;m tech-agnostic and adapt to whatever your stack needs. I also have strong{" "}
+                  <span className="text-foreground font-medium">SEO</span> experience with Google Search Console
+                  across multiple live apps. Currently travelling through {CURRENT_LOCATION} as a digital nomad,
+                  which means I&apos;m available at a <span className="text-foreground font-medium">reduced rate</span>.
                 </p>
               </CardContent>
             </Card>
