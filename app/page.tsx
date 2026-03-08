@@ -21,6 +21,7 @@ import { GitHubStats } from "@/components/github-stats";
 import { ScrambleText } from "@/components/scramble-text";
 import { RotatingTypewriter } from "@/components/rotating-typewriter";
 import { CyclingMoreBadge } from "@/components/cycling-more-badge";
+import { TimezoneCompare } from "@/components/timezone-compare";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 // ============================================
@@ -632,8 +633,11 @@ export default function Page() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left"
+          className="relative flex flex-col items-center gap-6 text-center md:flex-row md:text-left"
         >
+          <div className="absolute top-0 right-0">
+            <TimezoneCompare variant="hero" />
+          </div>
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -744,7 +748,10 @@ export default function Page() {
         >
           <div className="mx-auto max-w-4xl px-6">
             <div className="flex h-12 items-center justify-between">
-              <span className="text-sm font-semibold">JD</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold">JD</span>
+                <TimezoneCompare />
+              </div>
               <div className="flex items-center gap-1">
                 {[
                   { label: "Experience", action: () => switchTabAndScroll("experience") },
