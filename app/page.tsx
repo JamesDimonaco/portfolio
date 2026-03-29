@@ -72,6 +72,13 @@ function AnimatedSection({ children, className, delay = 0, id }: { children: Rea
 
 const projects = [
   {
+    title: "PageAlert",
+    description: "AI-powered website monitoring. Paste a URL, describe what you're looking for in plain English, and get notified when it appears. Open source.",
+    tech: ["TypeScript", "Next.js", "Convex", "Playwright", "Claude AI"],
+    github: "https://github.com/JamesDimonaco/prowl",
+    live: "https://pagealert.io",
+  },
+  {
     title: "Timezone Map",
     description: "An interactive world timezone map with 60+ cities, live time zones, and real-time user presence.",
     tech: ["TypeScript", "Next.js", "MapLibre", "Convex"],
