@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 // ============================================
 // UPDATE THIS WHEN YOU MOVE TO A NEW TIMEZONE
 // ============================================
-const CURRENT_TIMEZONE = "America/Mexico_City";
+const CURRENT_TIMEZONE = "Asia/Bangkok";
 
 interface Details {
   fromCity: string;

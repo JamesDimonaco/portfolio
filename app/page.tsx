@@ -27,7 +27,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 // ============================================
 // UPDATE THIS WHEN YOU MOVE TO A NEW LOCATION
 // ============================================
-const CURRENT_LOCATION = "Central America";
+const CURRENT_LOCATION = "Thailand";
 
 // Animation variants
 const fadeInUp = {
@@ -72,6 +72,13 @@ function AnimatedSection({ children, className, delay = 0, id }: { children: Rea
 
 const projects = [
   {
+    title: "MyEtAl",
+    description: "Share your research with a QR code. Researchers curate collections of papers, repos, and links, then generate a scannable QR for posters, slides, or CVs. Viewers get instant access — no sign-up needed. Web + iOS + Android.",
+    tech: ["TypeScript", "Next.js", "Expo", "FastAPI", "PostgreSQL", "Docker"],
+    github: "https://github.com/JamesDimonaco/myetal",
+    live: "https://myetal.app",
+  },
+  {
     title: "PageAlert",
     description: "AI-powered website monitoring. Paste a URL, describe what you're looking for in plain English, and get notified when it appears. Open source.",
     tech: ["TypeScript", "Next.js", "Convex", "Playwright", "Claude AI"],
@@ -112,13 +119,6 @@ const projects = [
     tech: ["TypeScript", "React"],
     github: "https://github.com/jamesdimonaco/travel-kitchen",
     live: "https://travelkitchen.app/",
-  },
-  {
-    title: "Trek Together",
-    description: "A location-based social platform for hikers and trekkers. GPS-powered city chat rooms, real-time messaging, and seamless anonymous-to-authenticated flows. My most active project.",
-    tech: ["TypeScript", "Next.js", "Convex", "Clerk"],
-    github: "https://github.com/jamesdimonaco/trek-together",
-    live: "https://www.trektogether.app/",
   },
 ];
 
@@ -688,8 +688,8 @@ export default function Page() {
               className="max-w-lg text-muted-foreground"
             >
               Product engineer and technical generalist from the UK with 8 years of experience. I don&apos;t just write code—I architect solutions, manage AI agents, review their output, and ship complete products. Currently digital nomading through {CURRENT_LOCATION}, building side projects like{" "}
-              <a href="https://www.trektogether.app/" target="_blank" rel="noopener" className="text-foreground font-medium underline underline-offset-4 hover:text-primary transition-colors">Trek Together</a>
-              {" "}to solve real problems I find while travelling.
+              <a href="https://myetal.app" target="_blank" rel="noopener" className="text-foreground font-medium underline underline-offset-4 hover:text-primary transition-colors">MyEtAl</a>
+              {" "}to solve real problems I find along the way.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
