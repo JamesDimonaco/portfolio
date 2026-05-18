@@ -309,9 +309,8 @@ const services = [
 // Key format: "YYYY-MM" — any month not listed defaults to "good"
 // ============================================
 const availability: Record<string, "good" | "ok" | "limited"> = {
-  "2026-02": "ok",
-  "2026-03": "limited",
-  "2026-04": "ok",
+  "2026-05": "ok",
+  "2026-06": "ok",
 };
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

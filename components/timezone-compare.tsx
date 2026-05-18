@@ -10,155 +10,167 @@ import { cn } from "@/lib/utils";
 // ============================================
 const CURRENT_TIMEZONE = "America/Mexico_City";
 
-interface TimezoneData {
-  jamesTime: string;
-  visitorTime: string;
-  jamesCity: string;
-  visitorCity: string;
-  hourDifference: number;
+interface Details {
+  fromCity: string;
+  fromCountry: string;
+  fromFlag: string;
+  fromDate: string;
+  toCity: string;
+  toCountry: string;
+  toFlag: string;
+  toDate: string;
+  direction: string;
 }
 
 function formatCity(tz: string) {
   return tz.split("/").pop()!.replace(/_/g, " ");
 }
 
-function getLiveTimes(visitorTz: string) {
-  const now = new Date();
-  const jamesFmt = new Intl.DateTimeFormat("en-GB", {
-    timeZone: CURRENT_TIMEZONE,
+// Offset (hours from UTC) for a timezone at a specific instant.
+// Handles fractional offsets (e.g. India +5:30).
+function getOffsetHours(timeZone: string, at: Date) {
+  const dtf = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+  const parts = dtf.formatToParts(at).reduce<Record<string, string>>((acc, p) => {
+    if (p.type !== "literal") acc[p.type] = p.value;
+    return acc;
+  }, {});
+  const asUTC = Date.UTC(
+    Number(parts.year),
+    Number(parts.month) - 1,
+    Number(parts.day),
+    Number(parts.hour) % 24,
+    Number(parts.minute),
+    Number(parts.second),
+  );
+  return (asUTC - at.getTime()) / 3_600_000;
+}
+
+function formatTime(tz: string, at: Date) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: tz,
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
-  });
-  const visitorFmt = new Intl.DateTimeFormat("en-GB", {
-    timeZone: visitorTz,
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-  return {
-    jamesTime: jamesFmt.format(now),
-    visitorTime: visitorFmt.format(now),
-  };
+  }).format(at);
+}
+
+function formatDate(tz: string, at: Date) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: tz,
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  }).format(at);
+}
+
+function formatHours(abs: number) {
+  return Number.isInteger(abs) ? `${abs}h` : `${abs.toFixed(1)}h`;
 }
 
 export function TimezoneCompare({ variant = "nav" }: { variant?: "nav" | "hero" }) {
   const [open, setOpen] = useState(false);
-  const [data, setData] = useState<TimezoneData | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const cachedRef = useRef(false);
-  const visitorTzRef = useRef<string>("");
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [visitorTz, setVisitorTz] = useState<string | null>(null);
+  const [now, setNow] = useState(() => new Date());
+  const [details, setDetails] = useState<Details | null>(null);
+  const detailsFetchedRef = useRef(false);
 
-  const fetchComparison = useCallback(async () => {
-    const visitorTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    visitorTzRef.current = visitorTz;
-
-    if (visitorTz === CURRENT_TIMEZONE) {
-      const { jamesTime } = getLiveTimes(visitorTz);
-      setData({
-        jamesTime,
-        visitorTime: jamesTime,
-        jamesCity: formatCity(CURRENT_TIMEZONE),
-        visitorCity: formatCity(visitorTz),
-        hourDifference: 0,
-      });
-      cachedRef.current = true;
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-
-    try {
-      const res = await fetch(
-        `/api/timezone?from=${encodeURIComponent(CURRENT_TIMEZONE)}&to=${encodeURIComponent(visitorTz)}`,
-        { signal: controller.signal }
-      );
-      clearTimeout(timeout);
-
-      if (!res.ok) throw new Error("Failed to fetch timezone data");
-
-      const json = await res.json();
-      const { jamesTime, visitorTime } = getLiveTimes(visitorTz);
-
-      setData({
-        jamesTime,
-        visitorTime,
-        jamesCity: formatCity(CURRENT_TIMEZONE),
-        visitorCity: formatCity(visitorTz),
-        hourDifference: json.hour_difference ?? json.hourDifference ?? 0,
-      });
-      cachedRef.current = true;
-    } catch (e) {
-      clearTimeout(timeout);
-      if (e instanceof DOMException && e.name === "AbortError") {
-        setError("Request timed out");
-      } else {
-        setError("Failed to load timezone data");
-      }
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    setVisitorTz(Intl.DateTimeFormat().resolvedOptions().timeZone);
   }, []);
 
   useEffect(() => {
-    if (open && !cachedRef.current) {
-      fetchComparison();
+    const interval = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const sameTz = visitorTz === CURRENT_TIMEZONE;
+
+  // Positive => James is ahead of visitor. Negative => behind.
+  const rawDiff = visitorTz
+    ? getOffsetHours(CURRENT_TIMEZONE, now) - getOffsetHours(visitorTz, now)
+    : null;
+  const hourDiff = rawDiff === null ? null : Math.round(rawDiff * 10) / 10;
+
+  const fetchDetails = useCallback(async () => {
+    if (!visitorTz || sameTz || detailsFetchedRef.current) return;
+    detailsFetchedRef.current = true;
+    try {
+      const res = await fetch(
+        `/api/timezone?from=${encodeURIComponent(CURRENT_TIMEZONE)}&to=${encodeURIComponent(visitorTz)}`,
+      );
+      if (!res.ok) return;
+      const json = await res.json();
+      const d = json.data ?? json;
+      setDetails({
+        fromCity: d.from?.city ?? formatCity(CURRENT_TIMEZONE),
+        fromCountry: d.from?.country ?? "",
+        fromFlag: d.from?.flag ?? "",
+        fromDate: d.from?.currentDate ?? "",
+        toCity: d.to?.city ?? formatCity(visitorTz),
+        toCountry: d.to?.country ?? "",
+        toFlag: d.to?.flag ?? "",
+        toDate: d.to?.currentDate ?? "",
+        direction: d.difference?.description ?? "",
+      });
+    } catch {
+      // Basics still render — enrichment just stays empty.
     }
+  }, [visitorTz, sameTz]);
 
-    if (open && cachedRef.current && visitorTzRef.current) {
-      intervalRef.current = setInterval(() => {
-        const { jamesTime, visitorTime } = getLiveTimes(visitorTzRef.current);
-        setData((prev) =>
-          prev ? { ...prev, jamesTime, visitorTime } : prev
-        );
-      }, 60_000);
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [open, fetchComparison]);
-
-  // Start interval once data loads
   useEffect(() => {
-    if (open && data && !intervalRef.current) {
-      intervalRef.current = setInterval(() => {
-        const { jamesTime, visitorTime } = getLiveTimes(visitorTzRef.current);
-        setData((prev) =>
-          prev ? { ...prev, jamesTime, visitorTime } : prev
-        );
-      }, 60_000);
-    }
-  }, [open, data]);
+    if (open) fetchDetails();
+  }, [open, fetchDetails]);
 
-  function getDifferenceText(hours: number) {
-    if (hours === 0) return "Same timezone!";
-    const abs = Math.abs(hours);
-    const label = abs === 1 ? "hour" : "hours";
-    return hours > 0 ? `${abs} ${label} ahead` : `${abs} ${label} behind`;
+  function compactLabel() {
+    if (hourDiff === null) return null;
+    if (hourDiff === 0) return "same time";
+    const f = formatHours(Math.abs(hourDiff));
+    return hourDiff > 0 ? `${f} ahead` : `${f} behind`;
   }
+
+  function fullLabel() {
+    if (hourDiff === null) return "My time";
+    if (hourDiff === 0) return "We're in the same timezone";
+    const f = formatHours(Math.abs(hourDiff));
+    return hourDiff > 0 ? `I'm ${f} ahead of you` : `I'm ${f} behind you`;
+  }
+
+  const jamesCity = details?.fromCity ?? formatCity(CURRENT_TIMEZONE);
+  const visitorCity = visitorTz ? (details?.toCity ?? formatCity(visitorTz)) : "";
+  const jamesDate = details?.fromDate || formatDate(CURRENT_TIMEZONE, now);
+  const visitorDate = visitorTz ? (details?.toDate || formatDate(visitorTz, now)) : "";
+  const jamesTime = formatTime(CURRENT_TIMEZONE, now);
+  const visitorTime = visitorTz ? formatTime(visitorTz, now) : "";
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
         className={cn(
           "rounded-md text-muted-foreground transition-colors hover:text-foreground hover:bg-muted",
-          variant === "nav" && "p-1.5",
-          variant === "hero" && "p-2 flex items-center gap-1.5 text-xs"
+          variant === "nav" && "px-2 py-1 flex items-center gap-1.5 text-xs tabular-nums",
+          variant === "hero" && "px-2 py-1.5 flex items-center gap-1.5 text-xs tabular-nums",
         )}
-        aria-label="Compare timezones"
+        aria-label={`Compare timezones — ${fullLabel()}`}
       >
-        <Clock className={cn(variant === "nav" ? "size-3.5" : "size-3.5")} />
-        {variant === "hero" && <span>My time</span>}
+        <Clock className="size-3.5" />
+        {variant === "nav" && <span>{compactLabel() ?? "my time"}</span>}
+        {variant === "hero" && (
+          <span className="flex items-center gap-1">
+            <span>{fullLabel()}</span>
+            {hourDiff !== null && hourDiff !== 0 && (
+              <span className="text-muted-foreground/60">· tap</span>
+            )}
+          </span>
+        )}
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Positioner
@@ -167,71 +179,62 @@ export function TimezoneCompare({ variant = "nav" }: { variant?: "nav" | "hero" 
           sideOffset={4}
           align={variant === "hero" ? "end" : "start"}
         >
-          <Popover.Popup className="data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 ring-foreground/5 bg-popover text-popover-foreground rounded-2xl p-4 shadow-2xl ring-1 duration-100 z-50 origin-(--transform-origin) outline-none w-64">
-            {loading && (
-              <div className="flex items-center justify-center py-3">
-                <div className="size-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
-                <span className="ml-2 text-sm text-muted-foreground">
-                  Loading...
+          <Popover.Popup className="data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 ring-foreground/5 bg-popover text-popover-foreground rounded-2xl p-4 shadow-2xl ring-1 duration-100 z-50 origin-(--transform-origin) outline-none w-72">
+            <div className="space-y-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    {details?.fromFlag && <span aria-hidden>{details.fromFlag}</span>}
+                    <span className="text-sm font-medium truncate">
+                      James &mdash; {jamesCity}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {[details?.fromCountry, jamesDate].filter(Boolean).join(" · ")}
+                  </p>
+                </div>
+                <span className="text-base font-semibold tabular-nums shrink-0">
+                  {jamesTime}
                 </span>
               </div>
-            )}
 
-            {error && (
-              <div className="space-y-2 text-center">
-                <p className="text-sm text-muted-foreground">{error}</p>
-                <button
-                  onClick={() => {
-                    cachedRef.current = false;
-                    fetchComparison();
-                  }}
-                  className="text-sm text-foreground underline underline-offset-2 hover:text-muted-foreground"
-                >
-                  Retry
-                </button>
-              </div>
-            )}
-
-            {data && !loading && !error && (
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
-                      James ({data.jamesCity})
-                    </span>
-                    <span className="text-sm font-medium tabular-nums">
-                      {data.jamesTime}
-                    </span>
+              {!sameTz && visitorTz && (
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      {details?.toFlag && <span aria-hidden>{details.toFlag}</span>}
+                      <span className="text-sm font-medium truncate">
+                        You &mdash; {visitorCity}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {[details?.toCountry, visitorDate].filter(Boolean).join(" · ")}
+                    </p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
-                      You ({data.visitorCity})
-                    </span>
-                    <span className="text-sm font-medium tabular-nums">
-                      {data.visitorTime}
-                    </span>
-                  </div>
+                  <span className="text-base font-semibold tabular-nums shrink-0">
+                    {visitorTime}
+                  </span>
                 </div>
+              )}
 
-                <div className="h-px bg-border/50" />
+              <div className="h-px bg-border/50" />
 
-                <p className="text-sm text-muted-foreground text-center">
-                  {getDifferenceText(data.hourDifference)}
-                </p>
+              <p className="text-sm text-muted-foreground text-center">
+                {details?.direction || fullLabel()}
+              </p>
 
-                <div className="h-px bg-border/50" />
+              <div className="h-px bg-border/50" />
 
-                <a
-                  href="https://timezones.live"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <span>🔗</span>
-                  <span>timezones.live</span>
-                </a>
-              </div>
-            )}
+              <a
+                href="https://timezones.live"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <span>🔗</span>
+                <span>timezones.live</span>
+              </a>
+            </div>
           </Popover.Popup>
         </Popover.Positioner>
       </Popover.Portal>
