@@ -15,7 +15,7 @@ export function CyclingMoreBadge({ items, featured, intervalMs = 800 }: CyclingM
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    if (isHovered) return;
+    if (!isHovered) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % remaining.length);
     }, intervalMs);
@@ -31,16 +31,20 @@ export function CyclingMoreBadge({ items, featured, intervalMs = 800 }: CyclingM
     >
       <span className="text-primary font-medium">+{remaining.length}</span>
       <span className="w-px h-3 bg-border" />
-      <motion.span
-        key={currentIndex}
-        initial={{ y: 10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: -10, opacity: 0 }}
-        transition={{ duration: 0.3 }}
-        className="min-w-[60px]"
-      >
-        {remaining[currentIndex]}
-      </motion.span>
+      {isHovered ? (
+        <motion.span
+          key={currentIndex}
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -10, opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="min-w-[60px]"
+        >
+          {remaining[currentIndex]}
+        </motion.span>
+      ) : (
+        <span className="min-w-[60px]">more</span>
+      )}
     </motion.div>
   );
 }

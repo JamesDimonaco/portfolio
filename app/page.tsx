@@ -27,7 +27,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 // ============================================
 // UPDATE THIS WHEN YOU MOVE TO A NEW LOCATION
 // ============================================
-const CURRENT_LOCATION = "Thailand";
+const CURRENT_LOCATION = "Southeast Asia";
 
 // Animation variants
 const fadeInUp = {
@@ -128,6 +128,7 @@ const experience = [
     role: "Senior Full Stack Developer",
     period: "2025 - Present",
     status: "active" as const,
+    contract: true,
     summary: "Creating travel experiences through innovative digital products.",
     highlights: [],
     link: "https://github.com/PinTraveler",
@@ -137,6 +138,7 @@ const experience = [
     role: "Senior Full Stack Developer",
     period: "2024 - Present",
     status: "active" as const,
+    contract: true,
     summary: "London-based healthtech startup using genetic data to predict and prevent health conditions, primarily focused on women\u2019s health in the US market.",
     highlights: [
       "Took over full technical ownership as the outgoing CTO transitioned out",
@@ -241,9 +243,7 @@ const homelab = [
 
 const techStack = [
   "TypeScript",
-  "JavaScript",
   "Python",
-  "YAML",
   "Next.js",
   "React",
   "React Native",
@@ -270,8 +270,6 @@ const techStack = [
   "Linear",
   "Jira",
   "Figma",
-  "HTML5",
-  "CSS3",
 ];
 
 // Featured techs shown in overview (rest are in expandable)
@@ -511,6 +509,9 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
                 <Badge variant={exp.status === "active" ? "default" : "secondary"}>
                   {exp.status === "active" ? "Current" : "Past"}
                 </Badge>
+                {"contract" in exp && exp.contract && (
+                  <Badge variant="outline">Contract</Badge>
+                )}
               </CardTitle>
               <CardDescription>
                 {exp.role} &middot; {exp.period}
@@ -540,8 +541,8 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
             {hasHighlights && (
               <ul className="space-y-2 text-sm text-muted-foreground border-t border-border pt-3">
                 {exp.highlights.map((highlight, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="text-primary mt-1.5">•</span>
+                  <li key={i} className="flex items-start gap-2.5">
+                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
                     <span>{highlight}</span>
                   </li>
                 ))}
@@ -673,10 +674,9 @@ export default function Page() {
                 <RotatingTypewriter
                   texts={[
                     "Product Engineer",
-                    "Senior Full Stack Developer",
-                    "DevOps Engineer",
-                    "Cloud & Infrastructure Engineer",
-                    "Team Lead & Scrum Master",
+                    "AI-Augmented Developer",
+                    "DevOps Engineer · Caltech",
+                    "Homelab Sysadmin",
                   ]}
                 />
               </p>
@@ -1045,8 +1045,7 @@ export default function Page() {
                 <p className="text-muted-foreground">
                   I&apos;m tech-agnostic and adapt to whatever your stack needs. I also have strong{" "}
                   <span className="text-foreground font-medium">SEO</span> experience with Google Search Console
-                  across multiple live apps. Currently travelling through {CURRENT_LOCATION} as a digital nomad,
-                  which means I&apos;m available at a <span className="text-foreground font-medium">reduced rate</span>.
+                  across multiple live apps. Currently travelling through {CURRENT_LOCATION} as a digital nomad.
                 </p>
               </CardContent>
             </Card>
