@@ -328,6 +328,13 @@ const testimonials = [
     company: "Where You At",
     linkedin: "https://www.linkedin.com/in/muzzelle/",
   },
+  {
+    quote: "James was a fantastic addition to the SailGP tech team. What stood out most was his ability to quickly get to grips with a problem and come back with a pragmatic, well-thought-out solution — without needing his hand held. He collaborated brilliantly with the wider team and with external partners, which is why I trusted him to tech lead the Impact League project alongside Cognizant. Honestly, I was gutted when he left. I'd work with him again in a heartbeat.",
+    name: "Phil O'Grady",
+    role: "Head of Platform Engineering",
+    company: "SailGP",
+    linkedin: "https://www.linkedin.com/in/philogrady/",
+  },
 ];
 
 function SkillsAccordion() {
