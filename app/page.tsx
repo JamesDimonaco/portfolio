@@ -75,7 +75,8 @@ function AnimatedSection({ children, className, delay = 0, id }: { children: Rea
 const projects = [
   {
     title: "MyEtAl",
-    description: "Share your research with a QR code. Researchers curate collections of papers, repos, and links, then generate a scannable QR for posters, slides, or CVs. Viewers get instant access — no sign-up needed. Web + iOS + Android.",
+    active: true,
+    description: "Share your research with a QR code. Researchers curate collections of papers, repos, and links, then generate a scannable QR for posters, slides, or CVs. ORCID sign-in auto-drafts your publications; public discovery search surfaces published collections. Web + iOS + Android.",
     tech: ["TypeScript", "Next.js", "Expo", "FastAPI", "PostgreSQL", "Docker"],
     github: "https://github.com/JamesDimonaco/myetal",
     live: "https://myetal.app",
@@ -864,7 +865,12 @@ export default function Page() {
                   >
                     <Card size="sm">
                       <CardHeader>
-                        <CardTitle>{project.title}</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                          {project.title}
+                          {"active" in project && project.active && (
+                            <Badge>Actively building</Badge>
+                          )}
+                        </CardTitle>
                         <CardDescription>{project.description}</CardDescription>
                       </CardHeader>
                       <CardContent>
