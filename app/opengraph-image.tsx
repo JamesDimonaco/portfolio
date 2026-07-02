@@ -1,5 +1,10 @@
 import { ImageResponse } from "next/og";
 
+// Pre-render at build time instead of per-request — this image never
+// changes at runtime, so there's no reason to regenerate it on every hit.
+export const dynamic = "force-static";
+export const revalidate = false;
+
 // Image metadata
 export const alt = "James Dimonaco - Full Stack Developer";
 export const size = {
@@ -11,7 +16,7 @@ export const contentType = "image/png";
 // ============================================
 // UPDATE THIS WHEN YOU MOVE TO A NEW LOCATION
 // ============================================
-const CURRENT_LOCATION = "Colombia";
+const CURRENT_LOCATION = "Southeast Asia";
 
 export default async function Image() {
   return new ImageResponse(

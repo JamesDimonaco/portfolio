@@ -23,6 +23,8 @@ import { RotatingTypewriter } from "@/components/rotating-typewriter";
 import { CyclingMoreBadge } from "@/components/cycling-more-badge";
 import { TimezoneCompare } from "@/components/timezone-compare";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { InquiryForm } from "@/components/inquiry-form";
+import { LatestShip } from "@/components/latest-ship";
 
 // ============================================
 // UPDATE THIS WHEN YOU MOVE TO A NEW LOCATION
@@ -320,6 +322,13 @@ const testimonials = [
     role: "Senior iOS Developer & Co-Founder",
     company: "Pin Traveler",
     linkedin: "https://www.linkedin.com/in/mehmetcanalaca/",
+  },
+  {
+    quote: "James was our Head of Engineering at WYA for two years and the difference he made is hard to overstate. He scaled the team from two to eight, shipped the beacon-positioning tech that won us the Ordnance Survey Geospatial Innovation Award, and got us to 65,000 users without ever losing his head. The thing about James is he just owns things — you hand him a problem and stop worrying about it. I'd hire him again in a heartbeat.",
+    name: "Tamzin Lent",
+    role: "Founder & CEO",
+    company: "Where You At",
+    linkedin: "https://uk.linkedin.com/in/tamzin-lent-53072a157",
   },
   {
     quote: "James is super passionate about his work and will give 100% to deliver whatever is needed.",
@@ -751,6 +760,16 @@ export default function Page() {
           </div>
         </motion.section>
 
+        {/* Latest Ship Strip */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1.2 }}
+          className="mt-6"
+        >
+          <LatestShip />
+        </motion.div>
+
         {/* Sticky Navigation */}
         <motion.nav
           initial={{ opacity: 0, y: -10 }}
@@ -1080,7 +1099,27 @@ export default function Page() {
             </motion.div>
           </div>
 
-          {/* Availability & CTA */}
+          {/* Inquiry Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Work With Me</CardTitle>
+                <CardDescription>
+                  Tell me what you&apos;re building — I&apos;ll reply within a day.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <InquiryForm />
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Availability */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -1098,15 +1137,6 @@ export default function Page() {
                 <AvailabilityCalendar />
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
-                  <motion.a
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    href="mailto:James@dimonaco.co.uk?subject=Project Inquiry"
-                    className={cn(buttonVariants({ variant: "default", size: "lg" }), "w-full sm:w-auto")}
-                  >
-                    <Mail className="size-4" />
-                    Get in Touch
-                  </motion.a>
                   <motion.a
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
