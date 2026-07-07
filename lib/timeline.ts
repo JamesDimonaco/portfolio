@@ -4,11 +4,11 @@
 // TODO: dedupe — page.tsx and this file both hold work/cert/project facts.
 // Make them share a single source of truth once the timeline design settles.
 
-export type TimelineLane = "work" | "learning" | "projects" | "location";
+export type TimelineLane = "work" | "learning" | "projects";
 
 export interface TimelineEntry {
   lane: TimelineLane;
-  /** YYYY-MM — used for ordering and bar-span maths only */
+  /** YYYY-MM — used for ordering only */
   start: string;
   /** YYYY-MM, or "present" while ongoing. Omit for point-in-time events. */
   end?: string;
@@ -21,6 +21,10 @@ export interface TimelineEntry {
   link?: string;
 }
 
+// Chronology confirmed by James (2026-07): Where You At ends → Research
+// Homepage begins → Kubernetes/Docker training → Dama Health begins (after the
+// training) → Caltech CTME completes. Exact months are approximate where the
+// site only records a year; ordering is what matters and is correct.
 export const timelineEntries: TimelineEntry[] = [
   // ── Work ────────────────────────────────────────────────────────────
   {
@@ -54,16 +58,16 @@ export const timelineEntries: TimelineEntry[] = [
   {
     lane: "work",
     start: "2022-03",
-    end: "2024-06", // site says "Mar 2022 – 2024"; mid-year approximation
+    end: "2024-03", // James: WYA wound down early 2024, before the training
     title: "Where You At",
     detail: "Head of Engineering",
-    period: "Mar 2022 – 2024",
+    period: "Mar 2022 – early 2024",
     blurb:
       "Nightlife safety startup using indoor positioning with Bluetooth beacons. Scaled the team from 2 to 8.",
   },
   {
     lane: "work",
-    start: "2024-01", // site says "2024"; approximate month
+    start: "2024-08", // James: Dama started AFTER the Kubernetes training
     end: "present",
     title: "Dama Health",
     detail: "Senior Full Stack Developer · Contract",
@@ -103,7 +107,17 @@ export const timelineEntries: TimelineEntry[] = [
     link: "/certs/devops-caltech.pdf",
   },
 
-  // ── Projects (launch markers — kept sparse) ─────────────────────────
+  // ── Projects ────────────────────────────────────────────────────────
+  {
+    lane: "projects",
+    start: "2024-05", // James: Research Homepage began after WYA, before the training
+    end: "present",
+    title: "Research Homepage",
+    detail: "Actively building",
+    period: "2024 – Present",
+    blurb: "A researcher-focused homepage builder. Next.js + TypeScript.",
+    link: "https://github.com/JamesDimonaco",
+  },
   {
     lane: "projects",
     start: "2025-11",
@@ -137,41 +151,5 @@ export const timelineEntries: TimelineEntry[] = [
     period: "Apr 2026 – Present",
     blurb: "Share your research with a QR code. Web + iOS + Android.",
     link: "https://myetal.app",
-  },
-
-  // ── Location (coarse, approximate) ──────────────────────────────────
-  {
-    lane: "location",
-    start: "2018-06",
-    end: "2025-06", // approximate — left for South America mid 2025
-    title: "United Kingdom",
-    period: "2018 – mid 2025",
-    blurb: "Home base.",
-  },
-  {
-    lane: "location",
-    start: "2025-06", // approximate trip start
-    end: "2026-04",
-    title: "South & Central America",
-    period: "~Mid 2025 – Apr 2026",
-    blurb:
-      "Colombia → Bolivia → Peru → Ecuador → Colombia → Panama → Costa Rica → Nicaragua → El Salvador → Guatemala → Mexico. Working remotely for Dama Health throughout.",
-  },
-  {
-    lane: "location",
-    start: "2026-04",
-    end: "2026-05",
-    title: "United Kingdom",
-    period: "Apr – May 2026",
-    blurb: "Back briefly between trips.",
-  },
-  {
-    lane: "location",
-    start: "2026-05",
-    end: "present",
-    title: "Asia",
-    period: "May 2026 – Present",
-    blurb:
-      "Malaysia → Thailand (Open Water diving on Koh Tao) → Sumatra → Bali → Gili Islands. Nepal trekking planned for October 2026.",
   },
 ];

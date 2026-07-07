@@ -781,12 +781,12 @@ export default function Page() {
           style={{ pointerEvents: heroInView ? "none" : "auto" }}
         >
           <div className="mx-auto max-w-4xl px-6">
-            <div className="flex h-12 items-center justify-between">
-              <div className="flex items-center gap-2">
+            <div className="flex h-12 items-center gap-3">
+              <div className="flex shrink-0 items-center gap-2">
                 <span className="text-sm font-semibold">JD</span>
                 <TimezoneCompare />
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex min-w-0 flex-1 items-center justify-end gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {[
                   { label: "Experience", action: () => switchTabAndScroll("experience") },
                   { label: "Projects", action: () => switchTabAndScroll("projects") },
@@ -798,7 +798,7 @@ export default function Page() {
                   <button
                     key={item.label}
                     onClick={item.action}
-                    className="rounded-md px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
+                    className="shrink-0 whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
                   >
                     {item.label}
                   </button>
