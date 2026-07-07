@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench, MessageCircle, Quote } from "lucide-react";
+import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench, MessageCircle, Quote, Route } from "lucide-react";
 import Image from "next/image";
 import {
   Card,
@@ -25,6 +25,7 @@ import { TimezoneCompare } from "@/components/timezone-compare";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { InquiryForm } from "@/components/inquiry-form";
 import { LatestShip } from "@/components/latest-ship";
+import { CareerTimeline } from "@/components/career-timeline";
 
 // ============================================
 // UPDATE THIS WHEN YOU MOVE TO A NEW LOCATION
@@ -790,6 +791,7 @@ export default function Page() {
                   { label: "Experience", action: () => switchTabAndScroll("experience") },
                   { label: "Projects", action: () => switchTabAndScroll("projects") },
                   { label: "Skills", action: () => switchTabAndScroll("skills") },
+                  { label: "Journey", action: () => scrollToSection("journey") },
                   { label: "Testimonials", action: () => scrollToSection("testimonials") },
                   { label: "Contact", action: () => scrollToSection("work-together") },
                 ].map((item) => (
@@ -922,6 +924,22 @@ export default function Page() {
               <SkillsAccordion />
             </TabsContent>
           </Tabs>
+        </AnimatedSection>
+
+        <Separator className="my-12" />
+
+        {/* Journey Timeline Section */}
+        <AnimatedSection id="journey" className="space-y-6 scroll-mt-16">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+              <Route className="size-5" />
+              Where I&apos;ve Been
+            </h2>
+            <p className="text-muted-foreground">
+              Work, learning, projects, and places — 2018 to now
+            </p>
+          </div>
+          <CareerTimeline />
         </AnimatedSection>
 
         <Separator className="my-12" />
