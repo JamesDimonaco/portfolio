@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench, MessageCircle, Quote } from "lucide-react";
+import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench, MessageCircle, Quote, ArrowUpRight, FlaskConical, GitCommitHorizontal, Lock } from "lucide-react";
 import Image from "next/image";
 import {
   Card,
@@ -14,7 +14,15 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { GitHubStats } from "@/components/github-stats";
@@ -24,12 +32,15 @@ import { CyclingMoreBadge } from "@/components/cycling-more-badge";
 import { TimezoneCompare } from "@/components/timezone-compare";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { InquiryForm } from "@/components/inquiry-form";
-import { LatestShip } from "@/components/latest-ship";
+import { projects } from "@/lib/projects";
+import type { LatestCommit } from "@/app/api/commits/route";
 
 // ============================================
-// UPDATE THIS WHEN YOU MOVE TO A NEW LOCATION
+// UPDATE THESE WHEN YOU MOVE TO A NEW LOCATION
+// LOCATION = the broad region (used in prose), BASE = where you actually are
 // ============================================
 const CURRENT_LOCATION = "Southeast Asia";
+const CURRENT_BASE = "Gili Islands, Indonesia";
 
 // Animation variants
 const fadeInUp = {
@@ -72,65 +83,43 @@ function AnimatedSection({ children, className, delay = 0, id }: { children: Rea
   );
 }
 
-const projects = [
-  {
-    title: "MyEtAl",
-    active: true,
-    description: "Share your research with a QR code. Researchers curate collections of papers, repos, and links, then generate a scannable QR for posters, slides, or CVs. ORCID sign-in auto-drafts your publications; public discovery search surfaces published collections. Web + iOS + Android.",
-    tech: ["TypeScript", "Next.js", "Expo", "FastAPI", "PostgreSQL", "Docker"],
-    github: "https://github.com/JamesDimonaco/myetal",
-    live: "https://myetal.app",
-  },
-  {
-    title: "PageAlert",
-    description: "AI-powered website monitoring. Paste a URL, describe what you're looking for in plain English, and get notified when it appears. Open source.",
-    tech: ["TypeScript", "Next.js", "Convex", "Playwright", "Claude AI"],
-    github: "https://github.com/JamesDimonaco/prowl",
-    live: "https://pagealert.io",
-  },
-  {
-    title: "Timezone Map",
-    description: "An interactive world timezone map with 60+ cities, live time zones, and real-time user presence.",
-    tech: ["TypeScript", "Next.js", "MapLibre", "Convex"],
-    github: "https://github.com/JamesDimonaco/timezone-map",
-    live: "https://timezones.live/",
-  },
-  {
-    title: "Composure",
-    description: "A TUI dashboard to audit, optimize, and visualize Docker-Compose stacks in real-time.",
-    tech: ["Python", "Docker"],
-    github: "https://github.com/JamesDimonaco/composure",
-    live: "https://pypi.org/project/composure/",
-  },
-  {
-    title: "LexiKey",
-    description: "A TypeScript project for enhanced keyboard interactions and text processing.",
-    tech: ["TypeScript"],
-    github: "https://github.com/JamesDimonaco/LexiKey",
-    live: "https://www.lexikey.org/",
-  },
-  {
-    title: "Research Homepage",
-    description: "A modern research homepage built with TypeScript and Next.js.",
-    tech: ["TypeScript", "Next.js"],
-    github: "https://github.com/jamesdimonaco/research-homepage",
-    live: "https://nicholas.dimonaco.co.uk/",
-  },
-  {
-    title: "Travel Kitchen",
-    description: "A travel-focused culinary app for discovering recipes on the go.",
-    tech: ["TypeScript", "React"],
-    github: "https://github.com/jamesdimonaco/travel-kitchen",
-    live: "https://travelkitchen.app/",
-  },
-];
+function relativeDate(iso: string): string {
+  if (!iso) return "";
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 60) return `${Math.max(diffMins, 1)}m ago`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 30) return `${diffDays}d ago`;
+  const diffMonths = Math.floor(diffDays / 30);
+  if (diffMonths < 12) return `${diffMonths}mo ago`;
+  return `${Math.floor(diffMonths / 12)}y ago`;
+}
 
-const experience = [
+type DeepDive = {
+  intro: string;
+  sections: { title: string; items: string[] }[];
+};
+
+type Experience = {
+  company: string;
+  role: string;
+  period: string;
+  status: "active" | "past";
+  contract?: boolean;
+  summary: string;
+  highlights: string[];
+  link?: string;
+  deepDive?: DeepDive;
+};
+
+const experience: Experience[] = [
   {
     company: "PinTraveler",
     role: "Senior Full Stack Developer",
     period: "2025 - Present",
-    status: "active" as const,
+    status: "active",
     contract: true,
     summary: "Creating travel experiences through innovative digital products.",
     highlights: [],
@@ -138,18 +127,43 @@ const experience = [
   },
   {
     company: "Dama Health",
-    role: "Senior Full Stack Developer",
+    role: "Senior Full Stack Developer \u00b7 Tech Lead",
     period: "2024 - Present",
-    status: "active" as const,
+    status: "active",
     contract: true,
-    summary: "London-based healthtech startup using genetic data to predict and prevent health conditions, primarily focused on women\u2019s health in the US market.",
+    summary: "London-based women\u2019s healthtech startup serving the US market. Sole engineer and tech lead \u2014 I own the product (an AI clinician copilot, embeddable patient-intake funnels) and the compliance programme behind it.",
     highlights: [
       "Took over full technical ownership as the outgoing CTO transitioned out",
-      "Maintained and improved the existing platform across both the research and commercial arms",
+      "Built Dama Assist, an AI copilot for women\u2019s-health clinicians \u2014 Gemini on Vertex AI, Convex, Next.js",
+      "Built revenue-generating embeddable patient-intake funnels for client websites",
+      "Run the HIPAA compliance programme on Vanta: security policy suite, risk register, vendor reviews",
       "Optimised AWS infrastructure, delivering significant cost savings",
-      "Built new revenue-generating products including an embeddable sales funnel for client websites",
     ],
     link: "https://github.com/damahealth",
+    deepDive: {
+      intro:
+        "Contract roles usually mean feature work. At Dama I run the whole engineering function \u2014 the product itself, and the compliance machinery a US healthcare product needs behind it.",
+      sections: [
+        {
+          title: "Product",
+          items: [
+            "Dama Assist \u2014 an AI copilot for women\u2019s-health clinicians: Gemini (Vertex AI) chat grounded in medication, supplement, and clinical-guideline context, with literature search over PubMed",
+            "Embeddable patient-intake funnels that clients drop into their own websites",
+            "Subscriptions and billing (Stripe), NPI clinician verification against the CMS registry, transactional and marketing email flows",
+          ],
+        },
+        {
+          title: "Compliance & security engineering",
+          items: [
+            "Policy owner for the HIPAA compliance programme on Vanta \u2014 own and annually review the full security policy suite: data management, risk management, incident response, BC/DR, secure development, operations security",
+            "Ran a full vendor PHI-security audit: mapped data flows across 13 vendors, surfaced critical exposures (including LLM analytics tracing capturing full clinical conversations), and drove the BAA execution plan",
+            "Overhauled the company risk register \u2014 including adding AI-specific risks like clinical hallucination and prompt injection",
+            "Wrote and executed the quarterly data-restore runbook: first Convex restore test passed with 100% row-count fidelity, in ~30 minutes against a 4-hour RTO",
+            "GDPR/CCPA compliance planning: cookie-consent architecture, privacy policy and Terms of Service groundwork for a UK company processing data in the US",
+          ],
+        },
+      ],
+    },
   },
   {
     company: "Where You At",
@@ -498,8 +512,45 @@ function SkillsAccordion() {
   );
 }
 
+function DeepDiveDialog({ company, deepDive }: { company: string; deepDive: DeepDive }) {
+  return (
+    <Dialog>
+      <DialogTrigger
+        onClick={(e) => e.stopPropagation()}
+        render={<Button variant="outline" size="sm" />}
+      >
+        What I actually do here
+        <ArrowUpRight className="size-4" />
+      </DialogTrigger>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{company} — beyond the bullet points</DialogTitle>
+          <DialogDescription>{deepDive.intro}</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-5">
+          {deepDive.sections.map((section) => (
+            <div key={section.title} className="space-y-2.5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+                {section.title}
+              </p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                {section.items.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2.5">
+                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function ExperienceCard({ exp, isExpanded, onToggle }: {
-  exp: typeof experience[0];
+  exp: Experience;
   isExpanded: boolean;
   onToggle: () => void;
 }) {
@@ -567,18 +618,23 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
             )}
           </motion.div>
         </CardContent>
-        {exp.link && !isExpanded && (
-          <CardFooter>
-            <a
-              href={exp.link}
-              target="_blank"
-              rel="noopener"
-              onClick={(e) => e.stopPropagation()}
-              className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-            >
-              <Github className="size-4" />
-              View Organization
-            </a>
+        {(exp.deepDive || (exp.link && !isExpanded)) && (
+          <CardFooter className="gap-2">
+            {exp.deepDive && (
+              <DeepDiveDialog company={exp.company} deepDive={exp.deepDive} />
+            )}
+            {exp.link && !isExpanded && (
+              <a
+                href={exp.link}
+                target="_blank"
+                rel="noopener"
+                onClick={(e) => e.stopPropagation()}
+                className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+              >
+                <Github className="size-4" />
+                View Organization
+              </a>
+            )}
           </CardFooter>
         )}
       </Card>
@@ -624,6 +680,34 @@ function AvailabilityCalendar() {
 export default function Page() {
   const [expandedExp, setExpandedExp] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("experience");
+  const [commits, setCommits] = useState<Record<string, LatestCommit> | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/commits")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && data?.commits) setCommits(data.commits);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Most recently committed project first; repos without commit data keep
+  // their hand-curated order at the bottom.
+  const sortedProjects = useMemo(() => {
+    if (!commits) return projects;
+    return [...projects].sort((a, b) => {
+      const da = commits[a.repo]?.date;
+      const db = commits[b.repo]?.date;
+      if (da && db) return new Date(db).getTime() - new Date(da).getTime();
+      if (da) return -1;
+      if (db) return 1;
+      return 0;
+    });
+  }, [commits]);
   const experienceRef = useRef(null);
   const experienceInView = useInView(experienceRef, { once: true, margin: "-100px" });
   const statsRef = useRef(null);
@@ -650,7 +734,7 @@ export default function Page() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="mx-auto max-w-4xl px-6 py-16">
+      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-16">
         {/* Hero Section */}
         <motion.section
           ref={heroRef}
@@ -659,7 +743,7 @@ export default function Page() {
           transition={{ duration: 0.6 }}
           className="relative flex flex-col items-center gap-6 text-center md:flex-row md:text-left"
         >
-          <div className="absolute top-0 right-0">
+          <div className="order-last md:order-none md:absolute md:top-0 md:right-0">
             <TimezoneCompare variant="hero" />
           </div>
           <motion.div
@@ -761,14 +845,59 @@ export default function Page() {
           </div>
         </motion.section>
 
-        {/* Latest Ship Strip */}
+        {/* Right Now Strip */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1.2 }}
-          className="mt-6"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.1 }}
+          className="mt-10 space-y-3"
         >
-          <LatestShip />
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-green-500" />
+            </span>
+            Right now
+          </div>
+          <div className="grid gap-2 sm:grid-cols-3">
+            <button
+              onClick={() => switchTabAndScroll("experience")}
+              className="flex items-start gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 text-left transition-colors hover:border-primary/50"
+            >
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10">
+                <Briefcase className="size-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Contracting</p>
+                <p className="text-xs text-muted-foreground">
+                  Dama Health — AI clinician copilot, plus HIPAA &amp; GDPR compliance engineering
+                </p>
+              </div>
+            </button>
+            <button
+              onClick={() => switchTabAndScroll("projects")}
+              className="flex items-start gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3 text-left transition-colors hover:border-primary/50"
+            >
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10">
+                <FlaskConical className="size-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Building</p>
+                <p className="text-xs text-muted-foreground">
+                  Tools for researchers — MyEtAl, Research Homepage, taxon-sync
+                </p>
+              </div>
+            </button>
+            <div className="flex items-start gap-3 rounded-xl border border-border bg-muted/30 px-4 py-3">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10">
+                <MapPin className="size-4 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Based in</p>
+                <p className="text-xs text-muted-foreground">{CURRENT_BASE}</p>
+              </div>
+            </div>
+          </div>
         </motion.div>
 
         {/* Sticky Navigation */}
@@ -779,13 +908,15 @@ export default function Page() {
           className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-md pointer-events-auto"
           style={{ pointerEvents: heroInView ? "none" : "auto" }}
         >
-          <div className="mx-auto max-w-4xl px-6">
-            <div className="flex h-12 items-center justify-between">
-              <div className="flex items-center gap-2">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6">
+            <div className="flex h-12 items-center justify-between gap-2">
+              <div className="flex shrink-0 items-center gap-2">
                 <span className="text-sm font-semibold">JD</span>
-                <TimezoneCompare />
+                <div className="hidden sm:block">
+                  <TimezoneCompare />
+                </div>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex min-w-0 items-center gap-0.5 overflow-x-auto sm:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {[
                   { label: "Experience", action: () => switchTabAndScroll("experience") },
                   { label: "Projects", action: () => switchTabAndScroll("projects") },
@@ -796,7 +927,7 @@ export default function Page() {
                   <button
                     key={item.label}
                     onClick={item.action}
-                    className="rounded-md px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
+                    className="whitespace-nowrap rounded-md px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-muted sm:px-2.5"
                   >
                     {item.label}
                   </button>
@@ -855,56 +986,85 @@ export default function Page() {
                 Side projects and things I&apos;ve built
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
-                {projects.map((project, index) => (
-                  <motion.div
-                    key={project.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
-                  >
-                    <Card size="sm">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          {project.title}
-                          {"active" in project && project.active && (
-                            <Badge>Actively building</Badge>
+                {sortedProjects.map((project, index) => {
+                  const commit = commits?.[project.repo];
+                  return (
+                    <motion.div
+                      key={project.title}
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                    >
+                      <Card size="sm" className="h-full">
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2 flex-wrap">
+                            {project.title}
+                            {project.active && <Badge>Actively building</Badge>}
+                          </CardTitle>
+                          <CardDescription>{project.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <div className="flex flex-wrap gap-1.5">
+                            {project.tech.map((tech) => (
+                              <Badge key={tech} variant="secondary">
+                                {tech}
+                              </Badge>
+                            ))}
+                          </div>
+                          {commit && (
+                            <a
+                              href={commit.url}
+                              target={commit.url ? "_blank" : undefined}
+                              rel={commit.url ? "noopener" : undefined}
+                              className={cn(
+                                "flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground",
+                                commit.url && "transition-colors hover:text-foreground",
+                                !commit.url && "pointer-events-none",
+                              )}
+                            >
+                              <GitCommitHorizontal className="size-3.5 shrink-0" />
+                              <span className="truncate">{commit.message}</span>
+                              <span className="shrink-0 text-muted-foreground/60">
+                                · {relativeDate(commit.date)}
+                              </span>
+                            </a>
                           )}
-                        </CardTitle>
-                        <CardDescription>{project.description}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex flex-wrap gap-1.5">
-                          {project.tech.map((tech) => (
-                            <Badge key={tech} variant="secondary">
-                              {tech}
-                            </Badge>
-                          ))}
-                        </div>
-                      </CardContent>
-                      <CardFooter className="gap-2">
-                        <a
-                          href={project.github}
-                          target="_blank"
-                          rel="noopener"
-                          className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-                        >
-                          <Github className="size-4" />
-                          Code
-                        </a>
-                        <a
-                          href={project.live}
-                          target="_blank"
-                          rel="noopener"
-                          className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-                        >
-                          <ExternalLink className="size-4" />
-                          Live
-                        </a>
-                      </CardFooter>
-                    </Card>
-                  </motion.div>
-                ))}
+                        </CardContent>
+                        <CardFooter className="gap-2">
+                          {project.github ? (
+                            <a
+                              href={project.github}
+                              target="_blank"
+                              rel="noopener"
+                              className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+                            >
+                              <Github className="size-4" />
+                              Code
+                            </a>
+                          ) : (
+                            <span className="flex items-center gap-1.5 px-3 text-xs text-muted-foreground">
+                              <Lock className="size-3.5" />
+                              Private repo
+                            </span>
+                          )}
+                          {project.live && (
+                            <a
+                              href={project.live}
+                              target="_blank"
+                              rel="noopener"
+                              className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+                            >
+                              <ExternalLink className="size-4" />
+                              Live
+                            </a>
+                          )}
+                        </CardFooter>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
               </div>
             </TabsContent>
 
@@ -950,7 +1110,7 @@ export default function Page() {
                   >
                     <Card>
                       <CardContent className="space-y-4">
-                        <p className="text-lg italic text-muted-foreground">
+                        <p className="text-base italic text-muted-foreground sm:text-lg">
                           &ldquo;{t.quote}&rdquo;
                         </p>
                         <div className="flex items-center justify-between">
@@ -1011,7 +1171,7 @@ export default function Page() {
                     </div>
                     <div>
                       <p className="text-sm font-medium">Location</p>
-                      <p className="text-sm text-muted-foreground">{CURRENT_LOCATION}</p>
+                      <p className="text-sm text-muted-foreground">{CURRENT_BASE}</p>
                     </div>
                   </div>
                 </CardContent>
