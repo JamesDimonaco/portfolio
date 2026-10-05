@@ -13,14 +13,14 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    title: "Meanwhile",
+    title: "Who Was When",
     repo: "JamesDimonaco/meanwhile",
     active: true,
     description:
       "\"I'm looking at this — what else was happening in the world at the same time?\" Pick a culture or photograph a museum placard in any language (Claude reads it) and see who else was around at that moment: a world timeline, territory maps that follow the story, 39 wars with sides, battles and sourced casualty ranges, and country pages that put a country's civilisations and wars on one timeline. English, Spanish and Chinese, no Google services so it works in mainland China. Open source — MIT code, CC BY data.",
     tech: ["TypeScript", "Next.js", "next-intl", "D3", "Claude AI"],
     github: "https://github.com/JamesDimonaco/meanwhile",
-    live: "https://meanwhile.dimonaco.co.uk",
+    live: "https://whowaswhen.com",
   },
   {
     title: "MyEtAl",
