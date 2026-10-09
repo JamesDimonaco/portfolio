@@ -39,8 +39,8 @@ import type { LatestCommit } from "@/app/api/commits/route";
 // UPDATE THESE WHEN YOU MOVE TO A NEW LOCATION
 // LOCATION = the broad region (used in prose), BASE = where you actually are
 // ============================================
-const CURRENT_LOCATION = "Southeast Asia";
-const CURRENT_BASE = "Gili Islands, Indonesia";
+const CURRENT_LOCATION = "the Himalayas";
+const CURRENT_BASE = "Himalayas, Nepal";
 
 // Animation variants
 const fadeInUp = {
@@ -326,6 +326,8 @@ const services = [
 const availability: Record<string, "good" | "ok" | "limited"> = {
   "2026-05": "ok",
   "2026-06": "ok",
+  "2026-10": "limited",
+  "2026-11": "ok",
 };
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -788,7 +790,7 @@ export default function Page() {
               transition={{ duration: 0.5, delay: 0.8 }}
               className="max-w-lg text-muted-foreground"
             >
-              Product engineer and technical generalist from the UK with 8 years of experience. I don&apos;t just write code—I architect solutions, manage AI agents, review their output, and ship complete products. Currently digital nomading through {CURRENT_LOCATION}, building side projects like{" "}
+              Product engineer and technical generalist from the UK with 8 years of experience. I don&apos;t just write code—I architect solutions, manage AI agents, review their output, and ship complete products. Currently trekking through {CURRENT_LOCATION}, building side projects like{" "}
               <a href="https://myetal.app" target="_blank" rel="noopener" className="text-foreground font-medium underline underline-offset-4 hover:text-primary transition-colors">MyEtAl</a>
               {" "}to solve real problems I find along the way.
             </motion.p>
@@ -1237,7 +1239,7 @@ export default function Page() {
                 <p className="text-muted-foreground">
                   I&apos;m tech-agnostic and adapt to whatever your stack needs. I also have strong{" "}
                   <span className="text-foreground font-medium">SEO</span> experience with Google Search Console
-                  across multiple live apps. Currently travelling through {CURRENT_LOCATION} as a digital nomad.
+                  across multiple live apps. Currently trekking through {CURRENT_LOCATION}.
                 </p>
               </CardContent>
             </Card>
