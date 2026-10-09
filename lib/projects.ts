@@ -17,7 +17,7 @@ export const projects: Project[] = [
     repo: "JamesDimonaco/meanwhile",
     active: true,
     description:
-      "\"I'm looking at this — what else was happening in the world at the same time?\" Pick a culture or photograph a museum placard in any language (Claude reads it) and see who else was around at that moment: a world timeline, territory maps that follow the story, 39 wars with sides, battles and sourced casualty ranges, and country pages that put a country's civilisations and wars on one timeline. English, Spanish and Chinese, no Google services so it works in mainland China. Open source — MIT code, CC BY data.",
+      "\"What else was happening in the world at the same time?\" Pick a culture or photograph a museum placard in any language and see who else was around: a world timeline, territory maps, wars and country pages. English, Spanish and Chinese. Open source.",
     tech: ["TypeScript", "Next.js", "next-intl", "D3", "Claude AI"],
     github: "https://github.com/JamesDimonaco/meanwhile",
     live: "https://whowaswhen.com",
@@ -68,6 +68,15 @@ export const projects: Project[] = [
     tech: ["TypeScript", "Next.js", "Convex", "Playwright", "Claude AI"],
     github: "https://github.com/JamesDimonaco/prowl",
     live: "https://pagealert.io",
+  },
+  {
+    title: "Trek Together",
+    repo: "JamesDimonaco/trek-together",
+    description:
+      "Find trekking buddies in any city. Anonymous per-city group chats, trail reports and trek requests, with DMs and profiles once you sign up.",
+    tech: ["TypeScript", "Next.js", "Convex", "Clerk", "Google Maps"],
+    github: "https://github.com/JamesDimonaco/trek-together",
+    live: "https://trektogether.app",
   },
   {
     title: "Timezone Map",
