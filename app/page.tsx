@@ -131,35 +131,43 @@ const experience: Experience[] = [
     period: "2024 - Present",
     status: "active",
     contract: true,
-    summary: "London-based women\u2019s healthtech startup serving the US market. Sole engineer and tech lead \u2014 I own the product (an AI clinician copilot, embeddable patient-intake funnels) and the compliance programme behind it.",
+    summary: "London-based women\u2019s healthtech startup serving the US market. Sole engineer and tech lead \u2014 I built and run Dama Assist, an AI clinical decision-support copilot for clinicians treating menopause, hormone therapy and contraception.",
     highlights: [
-      "Took over full technical ownership as the outgoing CTO transitioned out",
-      "Built Dama Assist, an AI copilot for women\u2019s-health clinicians \u2014 Gemini on Vertex AI, Convex, Next.js",
-      "Built revenue-generating embeddable patient-intake funnels for client websites",
-      "Run the HIPAA compliance programme on Vanta: security policy suite, risk register, vendor reviews",
-      "Optimised AWS infrastructure, delivering significant cost savings",
+      "Built Dama Assist from scratch to a paid subscription product (launched Feb 2026) \u2014 Gemini on Vertex AI, Convex, Next.js",
+      "Answers are grounded in 40+ society guidelines, expert guides and partner clinical libraries, with citations and live PubMed search",
+      "Built the clinical tools around the chat: MHT bioequivalence and serum-absorption checker, category-based MHT switcher, Rx Checker",
+      "Run an LLM-as-judge eval harness with a pass/fail safety gate on every model, prompt or library change",
+      "Own security and the Vanta compliance programme as Policy Owner, plus releases, billing and clinician verification",
     ],
     link: "https://github.com/damahealth",
     deepDive: {
       intro:
-        "Contract roles usually mean feature work. At Dama I run the whole engineering function \u2014 the product itself, and the compliance machinery a US healthcare product needs behind it.",
+        "Contract roles usually mean feature work. At Dama I run the whole engineering function \u2014 Dama Assist itself, and the security and compliance machinery a US healthcare product needs behind it.",
       sections: [
         {
-          title: "Product",
+          title: "Dama Assist",
           items: [
-            "Dama Assist \u2014 an AI copilot for women\u2019s-health clinicians: Gemini (Vertex AI) chat grounded in medication, supplement, and clinical-guideline context, with literature search over PubMed",
-            "Embeddable patient-intake funnels that clients drop into their own websites",
-            "Subscriptions and billing (Stripe), NPI clinician verification against the CMS registry, transactional and marketing email flows",
+            "Subscription AI co-pilot for US clinicians, positioned as non-device clinical decision support: clinical reasoning and education, never diagnosis or patient-specific advice",
+            "Chat on Gemini (Vertex AI) with tool use over medication, supplement and guideline data, a Natural Cycles library for fertility-awareness questions, and PubMed literature search when a question asks for evidence",
+            "Clinical tools: an MHT bioequivalence and absorption tool that compares estradiol exposure across formulations, a category-based MHT switcher, and a brand and dose Rx Checker",
+            "Base and Pro tiers metered by messages (Stripe), Pro trials, NPI clinician verification against the CMS registry, and in-app announcements",
           ],
         },
         {
-          title: "Compliance & security engineering",
+          title: "Quality & safety",
           items: [
-            "Policy owner for the HIPAA compliance programme on Vanta \u2014 own and annually review the full security policy suite: data management, risk management, incident response, BC/DR, secure development, operations security",
-            "Ran a full vendor PHI-security audit: mapped data flows across 13 vendors, surfaced critical exposures (including LLM analytics tracing capturing full clinical conversations), and drove the BAA execution plan",
-            "Overhauled the company risk register \u2014 including adding AI-specific risks like clinical hallucination and prompt injection",
-            "Wrote and executed the quarterly data-restore runbook: first Convex restore test passed with 100% row-count fidelity, in ~30 minutes against a 4-hour RTO",
-            "GDPR/CCPA compliance planning: cookie-consent architecture, privacy policy and Terms of Service groundwork for a UK company processing data in the US",
+            "Eval harness that runs fixed clinician question sets on every change, scored on accuracy, completeness, clinical usefulness and a pass/fail safety gate, three runs per question to absorb variance",
+            "Evals compare Dama Assist against general-purpose models on contraindication traps, dosing, scope limits and jailbreak attempts",
+            "PHI guardrails: upload consent, \u201cdo not upload PHI\u201d copy throughout, and no patient-identifying data sent to third-party services",
+          ],
+        },
+        {
+          title: "Compliance & security",
+          items: [
+            "Policy Owner for the security programme on Vanta: data management, risk management, incident response, BC/DR and secure development policies",
+            "Vendor security audit across 13 vendors, and a company risk register with AI-specific risks like clinical hallucination and prompt injection",
+            "Quarterly data-restore runbook: first Convex restore test passed with 100% row-count fidelity, in ~30 minutes against a 4-hour RTO",
+            "GDPR/CCPA planning for a UK company processing data in the US: cookie consent, privacy policy and Terms of Service",
           ],
         },
       ],
@@ -280,12 +288,10 @@ const techStack = [
   "Kubernetes",
   "Nginx",
   "Claude Code",
-  "Cursor",
   "CodeRabbit",
   "PostHog",
   "Google Search Console",
   "Linear",
-  "Jira",
   "Figma",
 ];
 
