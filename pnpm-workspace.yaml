@@ -1,5 +1,10 @@
 packages:
   - .
+
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+
+overrides:
+  minimatch@<11.0.1: '>=11.0.1'
+  zod@<4.6.6: '>=4.6.6'
