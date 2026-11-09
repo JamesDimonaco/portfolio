@@ -39,8 +39,8 @@ import type { LatestCommit } from "@/app/api/commits/route";
 // UPDATE THESE WHEN YOU MOVE TO A NEW LOCATION
 // LOCATION = the broad region (used in prose), BASE = where you actually are
 // ============================================
-const CURRENT_LOCATION = "the Himalayas";
-const CURRENT_BASE = "Himalayas, Nepal";
+const CURRENT_LOCATION = "New Zealand";
+const CURRENT_BASE = "New Zealand";
 
 // Animation variants
 const fadeInUp = {
@@ -330,10 +330,8 @@ const services = [
 // Key format: "YYYY-MM" — any month not listed defaults to "good"
 // ============================================
 const availability: Record<string, "good" | "ok" | "limited"> = {
-  "2026-05": "ok",
-  "2026-06": "ok",
-  "2026-10": "limited",
-  "2026-11": "ok",
+  "2026-11": "limited",
+  "2026-12": "ok",
 };
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
