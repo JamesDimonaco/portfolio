@@ -16,7 +16,7 @@ export const contentType = "image/png";
 // ============================================
 // UPDATE THIS WHEN YOU MOVE TO A NEW LOCATION
 // ============================================
-const CURRENT_LOCATION = "the Himalayas";
+const CURRENT_LOCATION = "New Zealand";
 
 export default async function Image() {
   return new ImageResponse(
