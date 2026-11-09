@@ -32,7 +32,7 @@ import { CyclingMoreBadge } from "@/components/cycling-more-badge";
 import { TimezoneCompare } from "@/components/timezone-compare";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { InquiryForm } from "@/components/inquiry-form";
-import { projects } from "@/lib/projects";
+import { projects, type Project } from "@/lib/projects";
 import type { LatestCommit } from "@/app/api/commits/route";
 
 // ============================================
@@ -679,6 +679,76 @@ function AvailabilityCalendar() {
   );
 }
 
+function ProjectCard({ project, commit }: { project: Project; commit?: LatestCommit }) {
+  return (
+    <Card size="sm" className="h-full">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 flex-wrap">
+          {project.title}
+          {project.active && <Badge>Actively building</Badge>}
+        </CardTitle>
+        <CardDescription>{project.description}</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="flex flex-wrap gap-1.5">
+          {project.tech.map((tech) => (
+            <Badge key={tech} variant="secondary">
+              {tech}
+            </Badge>
+          ))}
+        </div>
+        {commit && (
+          <a
+            href={commit.url}
+            target={commit.url ? "_blank" : undefined}
+            rel={commit.url ? "noopener" : undefined}
+            className={cn(
+              "flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground",
+              commit.url && "transition-colors hover:text-foreground",
+              !commit.url && "pointer-events-none",
+            )}
+          >
+            <GitCommitHorizontal className="size-3.5 shrink-0" />
+            <span className="truncate">{commit.message}</span>
+            <span className="shrink-0 text-muted-foreground/60">
+              · {relativeDate(commit.date)}
+            </span>
+          </a>
+        )}
+      </CardContent>
+      <CardFooter className="gap-2">
+        {project.github ? (
+          <a
+            href={project.github}
+            target="_blank"
+            rel="noopener"
+            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+          >
+            <Github className="size-4" />
+            Code
+          </a>
+        ) : (
+          <span className="flex items-center gap-1.5 px-3 text-xs text-muted-foreground">
+            <Lock className="size-3.5" />
+            Private repo
+          </span>
+        )}
+        {project.live && (
+          <a
+            href={project.live}
+            target="_blank"
+            rel="noopener"
+            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+          >
+            <ExternalLink className="size-4" />
+            Live
+          </a>
+        )}
+      </CardFooter>
+    </Card>
+  );
+}
+
 export default function Page() {
   const [expandedExp, setExpandedExp] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("experience");
@@ -710,6 +780,8 @@ export default function Page() {
       return 0;
     });
   }, [commits]);
+  const researchProjects = sortedProjects.filter((p) => p.research);
+  const otherProjects = sortedProjects.filter((p) => !p.research);
   const experienceRef = useRef(null);
   const experienceInView = useInView(experienceRef, { once: true, margin: "-100px" });
   const statsRef = useRef(null);
@@ -923,6 +995,7 @@ export default function Page() {
                   { label: "Experience", action: () => switchTabAndScroll("experience") },
                   { label: "Projects", action: () => switchTabAndScroll("projects") },
                   { label: "Skills", action: () => switchTabAndScroll("skills") },
+                  { label: "Research", action: () => scrollToSection("research") },
                   { label: "Testimonials", action: () => scrollToSection("testimonials") },
                   { label: "Contact", action: () => scrollToSection("work-together") },
                 ].map((item) => (
@@ -988,85 +1061,18 @@ export default function Page() {
                 Side projects and things I&apos;ve built
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
-                {sortedProjects.map((project, index) => {
-                  const commit = commits?.[project.repo];
-                  return (
-                    <motion.div
-                      key={project.title}
-                      layout
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
-                    >
-                      <Card size="sm" className="h-full">
-                        <CardHeader>
-                          <CardTitle className="flex items-center gap-2 flex-wrap">
-                            {project.title}
-                            {project.active && <Badge>Actively building</Badge>}
-                          </CardTitle>
-                          <CardDescription>{project.description}</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                          <div className="flex flex-wrap gap-1.5">
-                            {project.tech.map((tech) => (
-                              <Badge key={tech} variant="secondary">
-                                {tech}
-                              </Badge>
-                            ))}
-                          </div>
-                          {commit && (
-                            <a
-                              href={commit.url}
-                              target={commit.url ? "_blank" : undefined}
-                              rel={commit.url ? "noopener" : undefined}
-                              className={cn(
-                                "flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground",
-                                commit.url && "transition-colors hover:text-foreground",
-                                !commit.url && "pointer-events-none",
-                              )}
-                            >
-                              <GitCommitHorizontal className="size-3.5 shrink-0" />
-                              <span className="truncate">{commit.message}</span>
-                              <span className="shrink-0 text-muted-foreground/60">
-                                · {relativeDate(commit.date)}
-                              </span>
-                            </a>
-                          )}
-                        </CardContent>
-                        <CardFooter className="gap-2">
-                          {project.github ? (
-                            <a
-                              href={project.github}
-                              target="_blank"
-                              rel="noopener"
-                              className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-                            >
-                              <Github className="size-4" />
-                              Code
-                            </a>
-                          ) : (
-                            <span className="flex items-center gap-1.5 px-3 text-xs text-muted-foreground">
-                              <Lock className="size-3.5" />
-                              Private repo
-                            </span>
-                          )}
-                          {project.live && (
-                            <a
-                              href={project.live}
-                              target="_blank"
-                              rel="noopener"
-                              className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-                            >
-                              <ExternalLink className="size-4" />
-                              Live
-                            </a>
-                          )}
-                        </CardFooter>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
+                {otherProjects.map((project, index) => (
+                  <motion.div
+                    key={project.title}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                  >
+                    <ProjectCard project={project} commit={commits?.[project.repo]} />
+                  </motion.div>
+                ))}
               </div>
             </TabsContent>
 
@@ -1084,6 +1090,38 @@ export default function Page() {
               <SkillsAccordion />
             </TabsContent>
           </Tabs>
+        </AnimatedSection>
+
+        <Separator className="my-12" />
+
+        {/* Research Section */}
+        <AnimatedSection id="research" className="space-y-6 scroll-mt-16">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-2">
+              <FlaskConical className="size-5" />
+              Tools for Research
+            </h2>
+            <p className="text-muted-foreground">
+              Researchers lose hours to work that software should do for them:
+              keeping a lab website current, sharing papers from a poster, matching
+              names across taxonomy databases. These are the tools I&apos;m building
+              to give that time back.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {researchProjects.map((project, index) => (
+              <motion.div
+                key={project.title}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+              >
+                <ProjectCard project={project} commit={commits?.[project.repo]} />
+              </motion.div>
+            ))}
+          </div>
         </AnimatedSection>
 
         <Separator className="my-12" />
