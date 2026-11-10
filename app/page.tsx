@@ -83,6 +83,12 @@ function AnimatedSection({ children, className, delay = 0, id }: { children: Rea
   );
 }
 
+const ACTIVE_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
+
+function isActive(commit: LatestCommit | undefined): boolean {
+  return !!commit && Date.now() - new Date(commit.date).getTime() < ACTIVE_WINDOW_MS;
+}
+
 function relativeDate(iso: string): string {
   if (!iso) return "";
   const diffMs = Date.now() - new Date(iso).getTime();
@@ -367,9 +373,13 @@ const testimonials = [
   },
 ];
 
-function SkillsAccordion() {
-  const [expanded, setExpanded] = useState<string | null>(null);
-
+function SkillsAccordion({
+  expanded,
+  setExpanded,
+}: {
+  expanded: string | null;
+  setExpanded: (section: string | null) => void;
+}) {
   const toggle = (section: string) => {
     setExpanded(expanded === section ? null : section);
   };
@@ -689,7 +699,7 @@ function ProjectCard({ project, commit }: { project: Project; commit?: LatestCom
       <CardHeader>
         <CardTitle className="flex items-center gap-2 flex-wrap">
           {project.title}
-          {project.active && <Badge>Actively building</Badge>}
+          {isActive(commit) && <Badge>Actively building</Badge>}
         </CardTitle>
         <CardDescription>{project.description}</CardDescription>
       </CardHeader>
@@ -756,6 +766,7 @@ function ProjectCard({ project, commit }: { project: Project; commit?: LatestCom
 export default function Page() {
   const [expandedExp, setExpandedExp] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("experience");
+  const [expandedSkill, setExpandedSkill] = useState<string | null>(null);
   const [commits, setCommits] = useState<Record<string, LatestCommit> | null>(null);
 
   useEffect(() => {
@@ -1089,9 +1100,13 @@ export default function Page() {
                 {featuredTechs.map((tech) => (
                   <Badge key={tech} variant="secondary">{tech}</Badge>
                 ))}
-                <CyclingMoreBadge items={techStack} featured={featuredTechs} />
+                <CyclingMoreBadge
+                  items={techStack}
+                  featured={featuredTechs}
+                  onClick={() => setExpandedSkill("techstack")}
+                />
               </div>
-              <SkillsAccordion />
+              <SkillsAccordion expanded={expandedSkill} setExpanded={setExpandedSkill} />
             </TabsContent>
           </Tabs>
         </AnimatedSection>
