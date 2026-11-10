@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useId } from "react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench, MessageCircle, Quote, ArrowUpRight, FlaskConical, GitCommitHorizontal, Lock } from "lucide-react";
@@ -573,7 +573,7 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
   onToggle: () => void;
 }) {
   const hasHighlights = exp.highlights.length > 0;
-  const highlightsId = `exp-${exp.company.toLowerCase().replace(/\W+/g, "-")}`;
+  const highlightsId = useId();
 
   return (
     <motion.div
@@ -614,7 +614,7 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
                   e.stopPropagation();
                   onToggle();
                 }}
-                className="flex size-9 shrink-0 items-center justify-center rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
               >
                 <motion.span
                   animate={{ rotate: isExpanded ? 180 : 0 }}
@@ -1017,14 +1017,14 @@ export default function Page() {
           style={{ pointerEvents: heroInView ? "none" : "auto" }}
         >
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
-            <div className="flex h-12 items-center justify-between gap-2">
+            <div className="flex h-12 items-center justify-center gap-2 sm:justify-between">
               <div className="flex shrink-0 items-center gap-2">
                 <span className="hidden text-sm font-semibold sm:inline">JD</span>
                 <div className="hidden sm:block">
                   <TimezoneCompare />
                 </div>
               </div>
-              <div className="flex min-w-0 items-center overflow-x-auto sm:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[359px]:[mask-image:linear-gradient(to_right,black_85%,transparent)]">
+              <div className="flex min-w-0 items-center overflow-x-auto sm:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[360px]:[mask-image:linear-gradient(to_right,black_85%,transparent)]">
                 {[
                   { label: "Experience", action: () => switchTabAndScroll("experience") },
                   { label: "Projects", action: () => switchTabAndScroll("projects") },
