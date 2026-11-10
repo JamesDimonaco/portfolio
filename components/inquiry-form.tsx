@@ -113,7 +113,7 @@ export function InquiryForm() {
       </Field>
 
       {status === "error" && (
-        <div className="flex items-start gap-2 rounded-xl bg-destructive/10 px-3 py-2.5 text-sm text-destructive">
+        <div role="alert" className="flex items-start gap-2 rounded-xl bg-destructive/10 px-3 py-2.5 text-sm text-destructive">
           <AlertCircle className="size-4 shrink-0 mt-0.5" />
           <span>
             {errorMessage}{" "}
@@ -141,8 +141,8 @@ export function InquiryForm() {
           </>
         )}
       </motion.button>
-      <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Mail className="size-3" />
+      <p className="flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
+        <Mail className="size-3.5" />
         Prefer email? <a href="mailto:James@dimonaco.co.uk" className="underline underline-offset-4 hover:text-foreground">James@dimonaco.co.uk</a>
       </p>
     </form>

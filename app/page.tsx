@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useId } from "react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Github, Linkedin, Mail, ExternalLink, Award, Server, MapPin, Calendar, Users, Sparkles, ChevronDown, Briefcase, Code, Wrench, MessageCircle, Quote, ArrowUpRight, FlaskConical, GitCommitHorizontal, Lock } from "lucide-react";
@@ -416,6 +416,7 @@ function SkillsAccordion({
                     href={cert.file}
                     target="_blank"
                     rel="noopener"
+                    aria-label={`View ${cert.title} certificate`}
                     className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
                   >
                     <ExternalLink className="size-3" />
@@ -491,23 +492,33 @@ function SkillsAccordion({
           onClick={() => toggle(id)}
         >
           <CardHeader className="pb-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex size-8 items-center justify-center rounded-md bg-primary/10">
+            <button
+              type="button"
+              aria-expanded={expanded === id}
+              aria-controls={`skills-${id}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggle(id);
+              }}
+              className="flex w-full items-center justify-between text-left rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              <span className="flex items-center gap-3">
+                <span className="flex size-8 items-center justify-center rounded-md bg-primary/10">
                   <Icon className="size-4 text-primary" />
-                </div>
-                <div>
-                  <CardTitle className="text-base">{title}</CardTitle>
-                  <CardDescription className="text-xs">{description}</CardDescription>
-                </div>
-              </div>
-              <motion.div
+                </span>
+                <span>
+                  <span className="block text-base font-medium">{title}</span>
+                  <span className="block text-sm text-muted-foreground">{description}</span>
+                </span>
+              </span>
+              <motion.span
                 animate={{ rotate: expanded === id ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
+                className="inline-flex"
               >
                 <ChevronDown className="size-5 text-muted-foreground" />
-              </motion.div>
-            </div>
+              </motion.span>
+            </button>
           </CardHeader>
           <motion.div
             initial={false}
@@ -517,8 +528,9 @@ function SkillsAccordion({
             }}
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
+            inert={expanded !== id}
           >
-            <CardContent className="pt-4" onClick={(e) => e.stopPropagation()}>
+            <CardContent id={`skills-${id}`} className="pt-4" onClick={(e) => e.stopPropagation()}>
               {content}
             </CardContent>
           </motion.div>
@@ -540,7 +552,7 @@ function DeepDiveDialog({ company, deepDive }: { company: string; deepDive: Deep
       </DialogTrigger>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{company} — beyond the bullet points</DialogTitle>
+          <DialogTitle className="pr-8">{company} — beyond the bullet points</DialogTitle>
           <DialogDescription>{deepDive.intro}</DialogDescription>
         </DialogHeader>
         <div className="space-y-5">
@@ -549,7 +561,7 @@ function DeepDiveDialog({ company, deepDive }: { company: string; deepDive: Deep
               <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                 {section.title}
               </p>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+              <ul className="max-w-prose space-y-2 text-sm text-muted-foreground">
                 {section.items.map((item, i) => (
                   <li key={i} className="flex items-start gap-2.5">
                     <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
@@ -571,6 +583,7 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
   onToggle: () => void;
 }) {
   const hasHighlights = exp.highlights.length > 0;
+  const highlightsId = useId();
 
   return (
     <motion.div
@@ -587,7 +600,7 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
       >
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <CardTitle className="flex items-center gap-2 flex-wrap">
                 {exp.company}
                 <Badge variant={exp.status === "active" ? "default" : "secondary"}>
@@ -602,18 +615,32 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
               </CardDescription>
             </div>
             {hasHighlights && (
-              <motion.div
-                animate={{ rotate: isExpanded ? 180 : 0 }}
-                transition={{ duration: 0.2 }}
+              <button
+                type="button"
+                aria-expanded={isExpanded}
+                aria-controls={highlightsId}
+                aria-label={isExpanded ? `Hide ${exp.company} highlights` : `Show ${exp.company} highlights`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggle();
+                }}
+                className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
               >
-                <ChevronDown className="size-5 text-muted-foreground shrink-0" />
-              </motion.div>
+                <motion.span
+                  animate={{ rotate: isExpanded ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="inline-flex"
+                >
+                  <ChevronDown className="size-5 text-muted-foreground" />
+                </motion.span>
+              </button>
             )}
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm text-muted-foreground">{exp.summary}</p>
+          <p className="max-w-prose text-sm text-muted-foreground">{exp.summary}</p>
           <motion.div
+            id={highlightsId}
             initial={false}
             animate={{
               height: isExpanded && hasHighlights ? "auto" : 0,
@@ -621,9 +648,10 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
             }}
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
+            inert={!(isExpanded && hasHighlights)}
           >
             {hasHighlights && (
-              <ul className="space-y-2 text-sm text-muted-foreground border-t border-border pt-3">
+              <ul className="max-w-prose space-y-2 text-sm text-muted-foreground border-t border-border pt-3">
                 {exp.highlights.map((highlight, i) => (
                   <li key={i} className="flex items-start gap-2.5">
                     <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
@@ -635,7 +663,7 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
           </motion.div>
         </CardContent>
         {(exp.deepDive || (exp.link && !isExpanded)) && (
-          <CardFooter className="gap-2">
+          <CardFooter className="flex-wrap gap-2">
             {exp.deepDive && (
               <DeepDiveDialog company={exp.company} deepDive={exp.deepDive} />
             )}
@@ -717,14 +745,14 @@ function ProjectCard({ project, commit }: { project: Project; commit?: LatestCom
             target={commit.url ? "_blank" : undefined}
             rel={commit.url ? "noopener" : undefined}
             className={cn(
-              "flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground",
+              "flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground",
               commit.url && "transition-colors hover:text-foreground",
               !commit.url && "pointer-events-none",
             )}
           >
             <GitCommitHorizontal className="size-3.5 shrink-0" />
             <span className="truncate">{commit.message}</span>
-            <span className="shrink-0 text-muted-foreground/60">
+            <span className="shrink-0">
               · {relativeDate(commit.date)}
             </span>
           </a>
@@ -885,7 +913,7 @@ export default function Page() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1 }}
-              className="flex items-center justify-center gap-2 md:justify-start"
+              className="flex flex-wrap items-center justify-center gap-2 md:justify-start"
             >
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -896,40 +924,42 @@ export default function Page() {
                 <Sparkles className="size-4" />
                 Available for Hire
               </motion.button>
-              <a
-                href="https://github.com/jamesdimonaco"
-                target="_blank"
-                rel="noopener"
-                aria-label="GitHub"
-                className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
-              >
-                <Github className="size-4" />
-              </a>
-              <a
-                href="https://linkedin.com/in/james-dimonaco-436901160"
-                target="_blank"
-                rel="noopener"
-                aria-label="LinkedIn"
-                className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
-              >
-                <Linkedin className="size-4" />
-              </a>
-              <a
-                href="mailto:James@dimonaco.co.uk"
-                aria-label="Email"
-                className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
-              >
-                <Mail className="size-4" />
-              </a>
-              <a
-                href="https://wa.me/447402440605"
-                target="_blank"
-                rel="noopener"
-                aria-label="WhatsApp"
-                className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
-              >
-                <MessageCircle className="size-4" />
-              </a>
+              <div className="flex items-center gap-2">
+                <a
+                  href="https://github.com/jamesdimonaco"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="GitHub"
+                  className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+                >
+                  <Github className="size-4" />
+                </a>
+                <a
+                  href="https://linkedin.com/in/james-dimonaco-436901160"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="LinkedIn"
+                  className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+                >
+                  <Linkedin className="size-4" />
+                </a>
+                <a
+                  href="mailto:James@dimonaco.co.uk"
+                  aria-label="Email"
+                  className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+                >
+                  <Mail className="size-4" />
+                </a>
+                <a
+                  href="https://wa.me/447402440605"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="WhatsApp"
+                  className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+                >
+                  <MessageCircle className="size-4" />
+                </a>
+              </div>
             </motion.div>
           </div>
         </motion.section>
@@ -958,7 +988,7 @@ export default function Page() {
               </div>
               <div>
                 <p className="text-sm font-medium">Contracting</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   Dama Health — AI clinician copilot, plus HIPAA &amp; GDPR compliance engineering
                 </p>
               </div>
@@ -972,7 +1002,7 @@ export default function Page() {
               </div>
               <div>
                 <p className="text-sm font-medium">Building</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   Tools for researchers — MyEtAl, Research Homepage, taxon-sync
                 </p>
               </div>
@@ -983,7 +1013,7 @@ export default function Page() {
               </div>
               <div>
                 <p className="text-sm font-medium">Based in</p>
-                <p className="text-xs text-muted-foreground">{CURRENT_BASE}</p>
+                <p className="text-sm text-muted-foreground">{CURRENT_BASE}</p>
               </div>
             </div>
           </div>
@@ -998,26 +1028,29 @@ export default function Page() {
           style={{ pointerEvents: heroInView ? "none" : "auto" }}
         >
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
-            <div className="flex h-12 items-center justify-between gap-2">
+            <div className="flex h-12 items-center justify-center gap-2 sm:justify-between">
               <div className="flex shrink-0 items-center gap-2">
-                <span className="text-sm font-semibold">JD</span>
+                <span className="hidden text-sm font-semibold sm:inline">JD</span>
                 <div className="hidden sm:block">
                   <TimezoneCompare />
                 </div>
               </div>
-              <div className="flex min-w-0 items-center gap-0.5 overflow-x-auto sm:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex min-w-0 items-center overflow-x-auto sm:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[360px]:[mask-image:linear-gradient(to_right,black_85%,transparent)]">
                 {[
                   { label: "Experience", action: () => switchTabAndScroll("experience") },
                   { label: "Projects", action: () => switchTabAndScroll("projects") },
                   { label: "Skills", action: () => switchTabAndScroll("skills") },
                   { label: "Research", action: () => scrollToSection("research") },
-                  { label: "Testimonials", action: () => scrollToSection("testimonials") },
+                  { label: "Testimonials", action: () => scrollToSection("testimonials"), phoneHidden: true },
                   { label: "Contact", action: () => scrollToSection("work-together") },
                 ].map((item) => (
                   <button
                     key={item.label}
                     onClick={item.action}
-                    className="whitespace-nowrap rounded-md px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-muted sm:px-2.5"
+                    className={cn(
+                      "whitespace-nowrap rounded-md px-1 py-2 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-muted sm:px-2.5 sm:text-sm",
+                      item.phoneHidden && "max-sm:hidden",
+                    )}
                   >
                     {item.label}
                   </button>
@@ -1079,6 +1112,7 @@ export default function Page() {
                 {otherProjects.map((project, index) => (
                   <motion.div
                     key={project.title}
+                    className="min-w-0"
                     layout
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1120,7 +1154,7 @@ export default function Page() {
               <FlaskConical className="size-5" />
               Tools for Research
             </h2>
-            <p className="text-muted-foreground">
+            <p className="max-w-prose text-muted-foreground">
               Researchers lose hours to work that software should do for them:
               keeping a lab website current, sharing papers from a poster, matching
               names across taxonomy databases. These are the tools I&apos;m building
@@ -1131,6 +1165,7 @@ export default function Page() {
             {researchProjects.map((project, index) => (
               <motion.div
                 key={project.title}
+                className="min-w-0"
                 layout
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -1169,7 +1204,7 @@ export default function Page() {
                   >
                     <Card>
                       <CardContent className="space-y-4">
-                        <p className="text-base italic text-muted-foreground sm:text-lg">
+                        <p className="max-w-prose text-base italic text-muted-foreground sm:text-lg">
                           &ldquo;{t.quote}&rdquo;
                         </p>
                         <div className="flex items-center justify-between">
@@ -1276,7 +1311,7 @@ export default function Page() {
             transition={{ duration: 0.5 }}
           >
             <Card>
-              <CardContent className="space-y-4">
+              <CardContent className="max-w-prose space-y-4">
                 <p className="text-muted-foreground">
                   I started coding young and never stopped. With 8 years of hands-on experience,
                   I&apos;ve led teams of up to 8 people (6 devs, QA, and designer) and shipped products
@@ -1353,7 +1388,7 @@ export default function Page() {
           >
             <Card className="border-primary/50 bg-primary/5">
               <CardContent className="pt-6 space-y-5">
-                <p className="text-muted-foreground text-center sm:text-left">
+                <p className="max-w-prose text-muted-foreground text-center sm:text-left">
                   I&apos;m open to a variety of opportunities—from simple websites to complex SaaS platforms,
                   including side projects, contract roles, and long-term partnerships.
                 </p>
