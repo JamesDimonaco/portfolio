@@ -141,7 +141,7 @@ export function InquiryForm() {
           </>
         )}
       </motion.button>
-      <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+      <p className="flex flex-wrap items-center gap-x-1.5 text-sm text-muted-foreground">
         <Mail className="size-3.5" />
         Prefer email? <a href="mailto:James@dimonaco.co.uk" className="underline underline-offset-4 hover:text-foreground">James@dimonaco.co.uk</a>
       </p>

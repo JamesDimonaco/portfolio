@@ -497,8 +497,8 @@ function SkillsAccordion() {
                   <Icon className="size-4 text-primary" />
                 </span>
                 <span>
-                  <CardTitle className="text-base">{title}</CardTitle>
-                  <CardDescription>{description}</CardDescription>
+                  <span className="block text-base font-medium">{title}</span>
+                  <span className="block text-sm text-muted-foreground">{description}</span>
                 </span>
               </span>
               <motion.span
@@ -518,6 +518,7 @@ function SkillsAccordion() {
             }}
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
+            inert={expanded !== id}
           >
             <CardContent id={`skills-${id}`} className="pt-4" onClick={(e) => e.stopPropagation()}>
               {content}
@@ -541,7 +542,7 @@ function DeepDiveDialog({ company, deepDive }: { company: string; deepDive: Deep
       </DialogTrigger>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{company} — beyond the bullet points</DialogTitle>
+          <DialogTitle className="pr-8">{company} — beyond the bullet points</DialogTitle>
           <DialogDescription>{deepDive.intro}</DialogDescription>
         </DialogHeader>
         <div className="space-y-5">
@@ -637,6 +638,7 @@ function ExperienceCard({ exp, isExpanded, onToggle }: {
             }}
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
+            inert={!(isExpanded && hasHighlights)}
           >
             {hasHighlights && (
               <ul className="max-w-prose space-y-2 text-sm text-muted-foreground border-t border-border pt-3">
@@ -733,7 +735,7 @@ function ProjectCard({ project, commit }: { project: Project; commit?: LatestCom
             target={commit.url ? "_blank" : undefined}
             rel={commit.url ? "noopener" : undefined}
             className={cn(
-              "flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground",
+              "flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground",
               commit.url && "transition-colors hover:text-foreground",
               !commit.url && "pointer-events-none",
             )}
@@ -900,7 +902,7 @@ export default function Page() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1 }}
-              className="flex items-center justify-center gap-2 md:justify-start"
+              className="flex flex-wrap items-center justify-center gap-2 md:justify-start"
             >
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -1020,7 +1022,7 @@ export default function Page() {
                   <TimezoneCompare />
                 </div>
               </div>
-              <div className="flex min-w-0 items-center gap-0.5 overflow-x-auto sm:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex min-w-0 items-center gap-0.5 overflow-x-auto sm:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-sm:[mask-image:linear-gradient(to_right,black_85%,transparent)]">
                 {[
                   { label: "Experience", action: () => switchTabAndScroll("experience") },
                   { label: "Projects", action: () => switchTabAndScroll("projects") },
@@ -1032,7 +1034,7 @@ export default function Page() {
                   <button
                     key={item.label}
                     onClick={item.action}
-                    className="whitespace-nowrap rounded-md px-2 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground hover:bg-muted sm:px-2.5"
+                    className="whitespace-nowrap rounded-md px-1.5 py-2 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-muted sm:px-2.5 sm:text-sm"
                   >
                     {item.label}
                   </button>
@@ -1182,7 +1184,7 @@ export default function Page() {
                   >
                     <Card>
                       <CardContent className="space-y-4">
-                        <p className="text-base italic text-muted-foreground sm:text-lg">
+                        <p className="max-w-prose text-base italic text-muted-foreground sm:text-lg">
                           &ldquo;{t.quote}&rdquo;
                         </p>
                         <div className="flex items-center justify-between">
