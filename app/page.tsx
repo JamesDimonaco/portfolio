@@ -913,6 +913,7 @@ export default function Page() {
                 <Sparkles className="size-4" />
                 Available for Hire
               </motion.button>
+              <div className="flex items-center gap-2">
               <a
                 href="https://github.com/jamesdimonaco"
                 target="_blank"
@@ -947,6 +948,7 @@ export default function Page() {
               >
                 <MessageCircle className="size-4" />
               </a>
+              </div>
             </motion.div>
           </div>
         </motion.section>
@@ -1017,24 +1019,27 @@ export default function Page() {
           <div className="mx-auto max-w-4xl px-4 sm:px-6">
             <div className="flex h-12 items-center justify-between gap-2">
               <div className="flex shrink-0 items-center gap-2">
-                <span className="text-sm font-semibold">JD</span>
+                <span className="hidden text-sm font-semibold sm:inline">JD</span>
                 <div className="hidden sm:block">
                   <TimezoneCompare />
                 </div>
               </div>
-              <div className="flex min-w-0 items-center gap-0.5 overflow-x-auto sm:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-sm:[mask-image:linear-gradient(to_right,black_85%,transparent)]">
+              <div className="flex min-w-0 items-center overflow-x-auto sm:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {[
                   { label: "Experience", action: () => switchTabAndScroll("experience") },
                   { label: "Projects", action: () => switchTabAndScroll("projects") },
                   { label: "Skills", action: () => switchTabAndScroll("skills") },
                   { label: "Research", action: () => scrollToSection("research") },
-                  { label: "Testimonials", action: () => scrollToSection("testimonials") },
+                  { label: "Testimonials", action: () => scrollToSection("testimonials"), phoneHidden: true },
                   { label: "Contact", action: () => scrollToSection("work-together") },
                 ].map((item) => (
                   <button
                     key={item.label}
                     onClick={item.action}
-                    className="whitespace-nowrap rounded-md px-1.5 py-2 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-muted sm:px-2.5 sm:text-sm"
+                    className={cn(
+                      "whitespace-nowrap rounded-md px-1 py-2 text-xs text-muted-foreground transition-colors hover:text-foreground hover:bg-muted sm:px-2.5 sm:text-sm",
+                      item.phoneHidden && "max-sm:hidden",
+                    )}
                   >
                     {item.label}
                   </button>
