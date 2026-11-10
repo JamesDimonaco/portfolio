@@ -167,7 +167,7 @@ export function TimezoneCompare({ variant = "nav" }: { variant?: "nav" | "hero" 
           <span className="flex items-center gap-1">
             <span>{fullLabel()}</span>
             {hourDiff !== null && hourDiff !== 0 && (
-              <span>· tap</span>
+              <span aria-hidden="true">· tap</span>
             )}
           </span>
         )}

@@ -914,40 +914,40 @@ export default function Page() {
                 Available for Hire
               </motion.button>
               <div className="flex items-center gap-2">
-              <a
-                href="https://github.com/jamesdimonaco"
-                target="_blank"
-                rel="noopener"
-                aria-label="GitHub"
-                className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
-              >
-                <Github className="size-4" />
-              </a>
-              <a
-                href="https://linkedin.com/in/james-dimonaco-436901160"
-                target="_blank"
-                rel="noopener"
-                aria-label="LinkedIn"
-                className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
-              >
-                <Linkedin className="size-4" />
-              </a>
-              <a
-                href="mailto:James@dimonaco.co.uk"
-                aria-label="Email"
-                className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
-              >
-                <Mail className="size-4" />
-              </a>
-              <a
-                href="https://wa.me/447402440605"
-                target="_blank"
-                rel="noopener"
-                aria-label="WhatsApp"
-                className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
-              >
-                <MessageCircle className="size-4" />
-              </a>
+                <a
+                  href="https://github.com/jamesdimonaco"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="GitHub"
+                  className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+                >
+                  <Github className="size-4" />
+                </a>
+                <a
+                  href="https://linkedin.com/in/james-dimonaco-436901160"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="LinkedIn"
+                  className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+                >
+                  <Linkedin className="size-4" />
+                </a>
+                <a
+                  href="mailto:James@dimonaco.co.uk"
+                  aria-label="Email"
+                  className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+                >
+                  <Mail className="size-4" />
+                </a>
+                <a
+                  href="https://wa.me/447402440605"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="WhatsApp"
+                  className={cn(buttonVariants({ variant: "outline", size: "icon" }))}
+                >
+                  <MessageCircle className="size-4" />
+                </a>
               </div>
             </motion.div>
           </div>
@@ -1024,7 +1024,7 @@ export default function Page() {
                   <TimezoneCompare />
                 </div>
               </div>
-              <div className="flex min-w-0 items-center overflow-x-auto sm:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex min-w-0 items-center overflow-x-auto sm:gap-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-[359px]:[mask-image:linear-gradient(to_right,black_85%,transparent)]">
                 {[
                   { label: "Experience", action: () => switchTabAndScroll("experience") },
                   { label: "Projects", action: () => switchTabAndScroll("projects") },
