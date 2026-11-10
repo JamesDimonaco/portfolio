@@ -2,7 +2,6 @@ export type Project = {
   title: string;
   /** GitHub repo as owner/name — used to fetch the latest commit */
   repo: string;
-  active?: boolean;
   /** Private repos get no Code link (visitors would 404) */
   isPrivate?: boolean;
   /** Shown in the Research section instead of the Projects grid */
@@ -17,7 +16,6 @@ export const projects: Project[] = [
   {
     title: "Who Was When",
     repo: "JamesDimonaco/meanwhile",
-    active: true,
     description:
       "\"What else was happening in the world at the same time?\" Pick a culture or photograph a museum placard in any language and see who else was around: a world timeline, territory maps, wars and country pages. English, Spanish and Chinese. Open source.",
     tech: ["TypeScript", "Next.js", "next-intl", "D3", "Claude AI"],
@@ -27,7 +25,6 @@ export const projects: Project[] = [
   {
     title: "MyEtAl",
     repo: "JamesDimonaco/myetal",
-    active: true,
     research: true,
     description:
       "Share your research with a QR code. Researchers curate collections of papers, repos, and links, then generate a scannable QR for posters, slides, or CVs. ORCID sign-in auto-drafts your publications; public discovery search surfaces published collections. Web + iOS + Android.",
@@ -38,7 +35,6 @@ export const projects: Project[] = [
   {
     title: "Research Homepage",
     repo: "JamesDimonaco/research-homepage",
-    active: true,
     research: true,
     description:
       "Concierge site builder for researchers and labs — one app per researcher in a Turborepo, Sanity CMS, and an ORCID importer that pulls your publications from OpenAlex and drafts them automatically.",
@@ -49,7 +45,6 @@ export const projects: Project[] = [
   {
     title: "TaxonSync",
     repo: "JamesDimonaco/taxon-sync",
-    active: true,
     isPrivate: true,
     research: true,
     description:
@@ -60,7 +55,6 @@ export const projects: Project[] = [
   {
     title: "Magpie",
     repo: "JamesDimonaco/magpie",
-    active: true,
     isPrivate: true,
     description:
       "Receipt + compliance wrangler for UK limited companies. A payment leaves the bank, Magpie finds the receipt email, one keypress confirms it, and the document is vaulted to your own storage — while Companies House and HMRC deadlines are watched so nothing is filed late.",
@@ -69,7 +63,6 @@ export const projects: Project[] = [
   {
     title: "Kith",
     repo: "JamesDimonaco/kith",
-    active: true,
     isPrivate: true,
     description:
       "A living family tree for my own family — an interactive graph you can pan and explore, with real-time collaboration so relatives can fill in their own branches. Invite-only by design.",

@@ -7,9 +7,10 @@ interface CyclingMoreBadgeProps {
   items: string[];
   featured: string[];
   intervalMs?: number;
+  onClick: () => void;
 }
 
-export function CyclingMoreBadge({ items, featured, intervalMs = 800 }: CyclingMoreBadgeProps) {
+export function CyclingMoreBadge({ items, featured, intervalMs = 800, onClick }: CyclingMoreBadgeProps) {
   const remaining = items.filter(item => !featured.includes(item));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
@@ -23,8 +24,11 @@ export function CyclingMoreBadge({ items, featured, intervalMs = 800 }: CyclingM
   }, [remaining.length, isHovered, intervalMs]);
 
   return (
-    <motion.div
-      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-border text-xs text-muted-foreground cursor-default overflow-hidden"
+    <motion.button
+      type="button"
+      aria-label={`Show all ${items.length} technologies`}
+      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-border text-xs text-muted-foreground cursor-pointer overflow-hidden"
+      onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       whileHover={{ scale: 1.05 }}
@@ -45,6 +49,6 @@ export function CyclingMoreBadge({ items, featured, intervalMs = 800 }: CyclingM
       ) : (
         <span className="min-w-[60px]">more</span>
       )}
-    </motion.div>
+    </motion.button>
   );
 }
