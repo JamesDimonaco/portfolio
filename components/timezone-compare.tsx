@@ -159,15 +159,15 @@ export function TimezoneCompare({ variant = "nav" }: { variant?: "nav" | "hero" 
           variant === "nav" && "px-2 py-1 flex items-center gap-1.5 text-xs tabular-nums",
           variant === "hero" && "px-2 py-1.5 flex items-center gap-1.5 text-xs tabular-nums",
         )}
-        aria-label={`Compare timezones — ${fullLabel()}`}
       >
         <Clock className="size-3.5" />
+        <span className="sr-only">Compare timezones: </span>
         {variant === "nav" && <span>{compactLabel() ?? "my time"}</span>}
         {variant === "hero" && (
           <span className="flex items-center gap-1">
             <span>{fullLabel()}</span>
             {hourDiff !== null && hourDiff !== 0 && (
-              <span className="text-muted-foreground/60">· tap</span>
+              <span>· tap</span>
             )}
           </span>
         )}
@@ -179,7 +179,7 @@ export function TimezoneCompare({ variant = "nav" }: { variant?: "nav" | "hero" 
           sideOffset={4}
           align={variant === "hero" ? "end" : "start"}
         >
-          <Popover.Popup className="data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 ring-foreground/5 bg-popover text-popover-foreground rounded-2xl p-4 shadow-2xl ring-1 duration-100 z-50 origin-(--transform-origin) outline-none w-72">
+          <Popover.Popup aria-label="Timezone comparison" className="data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 ring-foreground/5 bg-popover text-popover-foreground rounded-2xl p-4 shadow-2xl ring-1 duration-100 z-50 origin-(--transform-origin) outline-none w-72">
             <div className="space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
