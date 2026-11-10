@@ -5,6 +5,8 @@ export type Project = {
   active?: boolean;
   /** Private repos get no Code link (visitors would 404) */
   isPrivate?: boolean;
+  /** Shown in the Research section instead of the Projects grid */
+  research?: boolean;
   description: string;
   tech: string[];
   github?: string;
@@ -26,6 +28,7 @@ export const projects: Project[] = [
     title: "MyEtAl",
     repo: "JamesDimonaco/myetal",
     active: true,
+    research: true,
     description:
       "Share your research with a QR code. Researchers curate collections of papers, repos, and links, then generate a scannable QR for posters, slides, or CVs. ORCID sign-in auto-drafts your publications; public discovery search surfaces published collections. Web + iOS + Android.",
     tech: ["TypeScript", "Next.js", "Expo", "FastAPI", "PostgreSQL", "Docker"],
@@ -36,11 +39,23 @@ export const projects: Project[] = [
     title: "Research Homepage",
     repo: "JamesDimonaco/research-homepage",
     active: true,
+    research: true,
     description:
       "Concierge site builder for researchers and labs — one app per researcher in a Turborepo, Sanity CMS, and an ORCID importer that pulls your publications from OpenAlex and drafts them automatically.",
     tech: ["TypeScript", "Next.js", "Turborepo", "Sanity"],
     github: "https://github.com/jamesdimonaco/research-homepage",
     live: "https://nicholas.dimonaco.co.uk/",
+  },
+  {
+    title: "TaxonSync",
+    repo: "JamesDimonaco/taxon-sync",
+    active: true,
+    isPrivate: true,
+    research: true,
+    description:
+      "Reconciles bacterial taxonomy across NCBI, GTDB, SILVA, Greengenes2 and eHOMD. Look up one taxon side by side, or paste a list of names, taxids or QIIME2 lineages and get a cross-database table back. Built only from the official release files, with a public JSON API and a Python client.",
+    tech: ["TypeScript", "Next.js", "Python"],
+    live: "https://taxon-sync.vercel.app",
   },
   {
     title: "Magpie",
